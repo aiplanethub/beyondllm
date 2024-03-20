@@ -2,7 +2,7 @@ import os
 import yaml
 
 class BaseLoader:
-    def __init__(self, chunk_size=1024, chunk_overlap=200, llama_parse_key=None, config_file=None):
+    def __init__(self, chunk_size=1024, chunk_overlap=200, llama_parse_key=None, config_file=None,**kwargs):
         if config_file:
             with open(config_file, 'r') as file:
                 config = yaml.safe_load(file)
@@ -12,7 +12,6 @@ class BaseLoader:
         else:
             self.chunk_size = chunk_size
             self.chunk_overlap = chunk_overlap
-            self.llama_parse_key = llama_parse_key or os.getenv('LLAMA_PARSE_API_KEY')
 
     def load(self, path):
         """Load data from a given path. To be implemented by subclasses."""
