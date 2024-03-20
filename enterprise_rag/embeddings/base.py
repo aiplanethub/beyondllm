@@ -2,24 +2,17 @@ import os
 import yaml
 
 class BaseEmbeddings:
-    def __init__(self,config_file=None):
+    def __init__(self, model_name="AzureOpenAI",config_file=None,**kwargs):
+        self.model_name = model_name
+        
         if config_file:
             with open(config_file, 'r') as file:
                 config = yaml.safe_load(file)
-                
-        else:
-            pass
+                self.model_name = config.get('model_name', self.model_name)
+                self.azure_endpoint = config.get('azure_endpoint', self.azure_endpoint)
+                self.azure_key = config.get('azure_key', self.azure_key)
+                self.api_version = config.get('api_version', self.api_version)
 
-    def load(self, path):
-        """Load data from a given path. To be implemented by subclasses."""
-        raise NotImplementedError("This method should be overridden by subclasses.")
-
-    def split(self, document):
-        """Split the loaded document into parts. To be implemented by subclasses."""
-        raise NotImplementedError("This method should be overridden by subclasses.")
-
-    def fit(self, path):
-        """Load and split the document, then return the split parts."""
-        documents = self.load(path)
-        split_documents = self.split(documents)
-        return split_documents
+    # Placeholder for embedding function
+    def get_embeddings(self):
+        raise NotImplementedError("This method should be implemented by subclasses.")
