@@ -1,0 +1,28 @@
+from pydantic import BaseModel, Field
+from typing import Any, Optional, Dict
+
+# data classes 
+class BaseModelConfig():
+    pass
+
+class BaseLLMModel(BaseModel):
+    """
+    Base class for Language Model (LLM) models.
+    """
+    def load_llm(self):
+        """
+        Method to load the language model.
+        """
+        raise NotImplementedError
+
+    def predict(self, query: Any):
+        """
+        Method to generate predictions from the loaded language model.
+        
+        Parameters:
+            query (Any): Input query for prediction.
+        
+        Returns:
+            Any: Model prediction for the given input query.
+        """
+        raise NotImplementedError
