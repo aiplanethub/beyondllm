@@ -1,28 +1,36 @@
 import os
 import yaml
+from dataclasses import dataclass
 
+@dataclass
 class BaseLoader:
-    def __init__(self, chunk_size=1024, chunk_overlap=200, llama_parse_key=None, config_file=None,**kwargs):
-        if config_file:
-            with open(config_file, 'r') as file:
-                config = yaml.safe_load(file)
-                self.chunk_size = config.get('chunk_size', chunk_size)
-                self.chunk_overlap = config.get('chunk_overlap', chunk_overlap)
-                self.llama_parse_key = config.get('api_key', llama_parse_key)
-        else:
-            self.chunk_size = chunk_size
-            self.chunk_overlap = chunk_overlap
+    """
+    Base class for data loaders. This class provides the template methods load, split, and fit
+    that must be implemented by subclasses to handle specific data loading and processing tasks.
+    """
+    path: str
+    chunk_size: int
+    chunk_overlap: int
 
-    def load(self, path):
+    def load(self):
         """Load data from a given path. To be implemented by subclasses."""
         raise NotImplementedError("This method should be overridden by subclasses.")
 
-    def split(self, document):
+    def split(self):
         """Split the loaded document into parts. To be implemented by subclasses."""
         raise NotImplementedError("This method should be overridden by subclasses.")
 
     def fit(self, path):
-        """Load and split the document, then return the split parts."""
+        """
+        Loads and splits the document, then returns the split parts.
+        This method leverages the load and split methods.
+        
+        Parameters:
+            path (str): The path to the data file.
+            
+        Returns:
+            List[TextNode]: The split nodes of the loaded document.
+        """
         documents = self.load(path)
         split_documents = self.split(documents)
         return split_documents

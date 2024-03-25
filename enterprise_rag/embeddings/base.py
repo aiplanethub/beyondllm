@@ -13,6 +13,8 @@ class BaseEmbeddings:
                 self.azure_key = config.get('azure_key', self.azure_key)
                 self.api_version = config.get('api_version', self.api_version)
 
-    # Placeholder for embedding function
-    def get_embeddings(self):
+    def load(self):
+        raise NotImplementedError("This method should be implemented by subclasses.")
+    
+    def embed_text(self):
         raise NotImplementedError("This method should be implemented by subclasses.")

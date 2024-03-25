@@ -22,7 +22,7 @@ class AzureEmbeddings(BaseEmbeddings):
         self.api_version = kwargs.get('api_version')
         self.azure_deployment_name = kwargs.get('azure_deployment_name')
 
-    def get_embeddings(self):
+    def load(self):
         embed_model = AzureOpenAIEmbedding(
             api_key=self.azure_key,
             azure_endpoint=self.azure_endpoint,

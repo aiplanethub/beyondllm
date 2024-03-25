@@ -1,33 +1,30 @@
 from .base import BaseLoader
-from llama_parse import LlamaParse
+from llama_index.core import SimpleDirectoryReader
 from llama_index.core.node_parser import SentenceSplitter
-from llama_index.core.node_parser import MarkdownNodeParser
-import os
 from dataclasses import dataclass
 
 @dataclass
-class LlamaParseLoader(BaseLoader):
-    llama_parse_key: str = "llx-"
-    
+class SimpleLoader(BaseLoader):
+    """
+    A loader class for handling simple file types. Inherits from BaseLoader and implements
+    the load and split methods for basic file processing.
+    """
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs) 
+
     def load(self, path):
         """Load data from a file."""
-        llama_parse_key = self.llama_parse_key or os.getenv('LLAMA_CLOUD_API_KEY')
-        try:
-            docs = LlamaParse(result_type="markdown",api_key=llama_parse_key).load_data(path)
-        except:
-            raise 
+        docs = SimpleDirectoryReader(input_files=[path]).load_data()
         return docs
 
     def split(self, documents):
         """Chunk the loaded document based on size and overlap"""
-        
-        parser = MarkdownNodeParser()
-        nodes = parser.get_nodes_from_documents(documents)
         splitter = SentenceSplitter(
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,
         )
-        split_documents = splitter.get_nodes_from_documents(nodes)
+        split_documents = splitter.get_nodes_from_documents(documents)
         return split_documents
 
     def fit(self, path):
