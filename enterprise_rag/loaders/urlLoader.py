@@ -1,14 +1,27 @@
 from .base import BaseLoader
-from llama_index.core import SimpleDirectoryReader
 from llama_index.core.node_parser import SentenceSplitter
+import subprocess
+import sys
+try:
+    from llama_index.readers.web import SimpleWebPageReader
+except ImportError:
+    user_agree = input("The feature you're trying to use requires an additional library. Would you like to install it now? [y/N]: ")
+    if user_agree.lower() == 'y':
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "llama_index.readers.web"])
+        from llama_index.readers.web import SimpleWebPageReader
+    else:
+        raise ImportError("The required 'llama_index.readers.web' is not installed.")
+    
 
-class SimpleLoader(BaseLoader):
+class UrlLoader(BaseLoader):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs) 
 
     def load(self, path):
-        """Load data from a file."""
-        docs = SimpleDirectoryReader(input_files=[path]).load_data()
+        """Load web page data from a file."""
+        docs = SimpleWebPageReader(html_to_text=True).load_data(
+            [path]
+        )
         return docs
 
     def split(self, documents):
