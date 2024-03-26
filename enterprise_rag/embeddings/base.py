@@ -13,10 +13,7 @@ class BaseEmbeddings(BaseModel):
 
     def load(self):
         raise NotImplementedError("This method should be implemented by subclasses.")
-
-    def embed_text(self):
-        raise NotImplementedError("This method should be implemented by subclasses.")
-
+    
     def embed_text(self,text):
         embed_model = self.load()
         return embed_model.embed_text(text)

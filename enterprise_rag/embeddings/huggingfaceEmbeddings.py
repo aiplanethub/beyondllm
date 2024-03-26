@@ -21,6 +21,3 @@ class HuggingFaceEmbeddings(BaseEmbeddings):
         embed_model = HuggingFaceEmbedding(model_name=self.model_name)
 
         return embed_model
-    
-    def embed_text(self):
-        pass
