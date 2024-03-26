@@ -13,7 +13,7 @@ print(type(data))
 
 embed_model = get_embed_model(
     model_name="AzureOpenAI",
-    api_key="d6d9522a01c74836907af2f3fd72ff85",
+    api_key="***********",
     azure_endpoint="https://marketplace.openai.azure.com/",
     deployment_name = "text-embed-marketplace",
     api_version="2023-05-15",
