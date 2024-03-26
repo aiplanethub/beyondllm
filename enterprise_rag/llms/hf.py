@@ -40,6 +40,3 @@ class HuggingFaceHubModel(BaseLLMModel):
             return self.llm.text_generation(prompt, **self.config.model_kwargs)
         else:
             return self.llm.text_generation(prompt)
-
-
-        
