@@ -1,12 +1,12 @@
 from typing import Any, Dict, List, Optional, Field
 from .base import BaseLLMModel, ModelConfig
 
-class ChatOpenAIModel(BaseLLMModel):
+class AzureOpenAIModel(BaseLLMModel):
     """
     Class representing a Chat Language Model (LLM) model using OpenAI
     Example:
     from enterprise-rag.llms import ChatOpenAIModel
-    llm = ChatOpenAIModel(model="gpt3.5-turbo",api_key = "<your_api_key>",model_kwargs={"max_tokens":512,"temperature":0.1})
+    llm = AzureOpenAIModel(model="gpt4",api_key = "<your_api_key>",deployment_name="",endpoint_url="",model_kwargs={"max_tokens":512,"temperature":0.1})
     """
     def __init__(self, config: ModelConfig):
         """
@@ -22,13 +22,17 @@ class ChatOpenAIModel(BaseLLMModel):
         try:
             import openai
         except ImportError:
-            raise ImportError("OpenAI library is not installed. Please install it with ``pip install openai``.")
+            raise ImportError("AzureChat Model is not installed. Please install it with ``pip install openai``.")
         
         try:
-            self.client = openai.OpenAI(api_key=self.config.api_key)
-
+            self.client = openai.AzureOpenAI(
+                api_version = "2023-05-15",
+                azure_endpoint = self.config.endpoint_url,
+                azure_deployment = self.config.deployment_name,  
+                api_key = self.config.api_key
+            )
         except Exception as e:
-            raise Exception("Failed to load the model from OpenAI:", str(e))
+            raise Exception("Failed to load the model from Azure OpenAI:", str(e))
 
 
     def predict(self,prompt:Any):
@@ -50,6 +54,6 @@ class ChatOpenAIModel(BaseLLMModel):
                     ]
                 )
         except NotFoundError:
-            raise "Check out `https://platform.openai.com/docs/models/overview` to see the supported model from OpenAI"
+            raise "Check out `https://platform.openai.com/docs/models/overview` to see the supported model from Azure OpenAI"
         
         return response.choices[0].message.content
