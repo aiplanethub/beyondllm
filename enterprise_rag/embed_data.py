@@ -1,7 +1,7 @@
 from .embeddings.azureOpenAIEmbeddings import AzureEmbeddings
 from .embeddings.huggingfaceEmbeddings import HuggingFaceEmbeddings
-from .embeddings.huggingfaceInferenceEmbeddings import HuggingFaceInferenceEmbeddings
-from .embeddings.evaluate import evaluateEmbeddings
+from .embeddings.huggingfaceInferenceEmbeddings import HuggingFaceInferenceEmbedding
+# from .embeddings.evaluate import evaluateEmbeddings
 
 def get_embed_model(model_name="AzureOpenAI", **kwargs):
     if model_name.startswith("HF-"):
@@ -17,7 +17,7 @@ def get_embed_model(model_name="AzureOpenAI", **kwargs):
             hf_model_name = parts[1]
         else:
             raise ValueError("Huggingface Inference model name required after HFI- prefix")
-        embedder = HuggingFaceInferenceEmbeddings(hf_model_name)        
+        embedder = HuggingFaceInferenceEmbedding(hf_model_name)        
     elif model_name=='AzureOpenAI':
         embedder = AzureEmbeddings(**kwargs)
     else:
