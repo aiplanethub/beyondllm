@@ -1,27 +1,10 @@
 from llama_index.legacy.finetuning import generate_qa_embedding_pairs
-
-import pandas as pd
-from llama_index.core import SimpleDirectoryReader, ServiceContext
-from llama_index.core import VectorStoreIndex
-from llama_index.core.settings import Settings
-from llama_index.core.retrievers import (
-    BaseRetriever,
-    VectorIndexRetriever,
-)
-from typing import List
-from llama_index.core.indices.query.schema import QueryBundle, QueryType
-from llama_index.core.schema import NodeWithScore
-from llama_index.core.evaluation import RetrieverEvaluator
-
-import time
-import json
-import numpy as np
-import pandas as pd
-import os
-
-from tqdm.notebook import tqdm
 from llama_index.core.schema import TextNode
 from llama_index.core import VectorStoreIndex
+from tqdm.notebook import tqdm
+import numpy as np
+import pandas as pd
+
 
 def generate_qa_dataset(llm,nodes):
     prompt = """\
@@ -36,6 +19,7 @@ def generate_qa_dataset(llm,nodes):
     You are a Teacher/ Professor. Your task is to setup {num_questions_per_chunk} questions for an upcoming quiz/examination.
     The questions should be diverse in nature across the document. Restrict the questions to the context information provided."
     """
+    print("Generating QA dataset....")
 
     qa_dataset = generate_qa_embedding_pairs(
         llm=llm,
@@ -47,22 +31,22 @@ def generate_qa_dataset(llm,nodes):
     return qa_dataset
 
 
-def evaluate(nodes, dataset, embed_model, top_k=5):
-    corpus = dataset.corpus
+def evaluate_from_dataset(dataset, retriever):
+    # corpus = dataset.corpus
     queries = dataset.queries
     relevant_docs = dataset.relevant_docs
 
-    nodes = [TextNode(id_=id_, text=text) for id_, text in corpus.items()]
-    print(nodes)
-    index = VectorStoreIndex(
-        nodes, embed_model=embed_model
-    )
-    retriever = index.as_retriever(similarity_top_k=top_k)
+    # nodes = [TextNode(id_=id_, text=text) for id_, text in corpus.items()]
+    
+    # index = VectorStoreIndex(
+    #     nodes, embed_model=embed_model
+    # )
+    # retriever = index.as_retriever(similarity_top_k=top_k)
 
     hits = 0
     eval_results = []
 
-    for query_id, query in tqdm(queries.items()):
+    for query_id, query in queries.items():
         retrieved_nodes = retriever.retrieve(query)
         retrieved_ids = [node.node.node_id for node in retrieved_nodes]
 
@@ -81,3 +65,8 @@ def evaluate(nodes, dataset, embed_model, top_k=5):
     average_mrr = np.average(eval_results)
 
     return hit_rate, average_mrr
+
+def evaluate_retriever(llm, nodes, retriever):
+    qa_dataset = generate_qa_dataset(llm,nodes)
+    hit_rate, mrr = evaluate_from_dataset(qa_dataset,retriever)
+    return {"hit_rate":hit_rate,"mrr":mrr}
