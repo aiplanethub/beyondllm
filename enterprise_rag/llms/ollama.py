@@ -1,31 +1,26 @@
-from typing import Any, Dict, List, Mapping, Optional
-    
 from .base import BaseLLMModel, ModelConfig
 from typing import Any, Dict, Optional
 
-class OllamaModel(BaseLLMModel):
+from dataclasses import dataclass
+
+@dataclass
+class OllamaModel:
     """
     Ollama locally run large language models.
 
     Example: 
     from enterprise_rag.llms import OllamaModel
-    llm = Ollama(model="llama2")
+    llm = OllamaModel(model="llama2")
     
     """
-    def __init__(self, config: ModelConfig):
-        """
-        Initializes the HuggingFaceHubModel with a ModelConfig object.
-        
-        Parameters:
-            config (ModelConfig): Configuration parameters for the model.
-        """
-        super().__init__()
-        self.config = config
+    model: str
+
+    def __post_init__(self):
+        self.load_llm()
         
     def load_llm(self):
         try:
             import ollama
-            
             self.client = ollama.Client(host='http://localhost:11434')
 
         except ImportError:
@@ -35,13 +30,21 @@ class OllamaModel(BaseLLMModel):
 
     def predict(self, prompt: Any):
         try:
-            response = client.chat(
-                model= self.config.model,
+            import ollama
+            response = self.client.chat(
+                model= self.model,
                 messages=[{
                     'role': 'user',
                     'content': prompt
                 }],
                 stream=True)
+
         except ollama.ResponseError:
             raise ollama.ResponseError("You need to pull model first. ollama pull <model-name>")
         return response
+
+    @staticmethod
+    def load_from_kwargs(kwargs): 
+        model_config = ModelConfig(**kwargs)
+        self.config = model_config
+        self.load_llm()

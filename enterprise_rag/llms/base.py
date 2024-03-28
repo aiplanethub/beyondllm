@@ -1,19 +1,26 @@
 from pydantic import BaseModel, Field
+from abc import ABC, abstractmethod
 from typing import Any, Optional, Dict
 
-# data classes 
-class BaseModelConfig():
-    pass
+class ModelConfig(BaseModel):
+    """Base configuration model for all LLMs.
+
+    This class can be extended to include more fields specific to certain LLMs.
+    """
+    pass 
+
 
 class BaseLLMModel(BaseModel):
     """
     Base class for Language Model (LLM) models.
     """
+
     def load_llm(self):
         """
         Method to load the language model.
         """
         raise NotImplementedError
+    
 
     def predict(self, query: Any):
         """
