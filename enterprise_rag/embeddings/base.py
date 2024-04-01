@@ -1,7 +1,13 @@
-import os
-import yaml
+from pydantic import BaseModel
 
-class BaseEmbeddings:
+class EmbeddingConfig(BaseModel):
+    """Base configuration model for all LLMs.
+
+    This class can be extended to include more fields specific to certain LLMs.
+    """
+    pass 
+
+class BaseEmbeddings(BaseModel):
     def __init__(self, model_name="AzureOpenAI",**kwargs):
         self.model_name = model_name
 
