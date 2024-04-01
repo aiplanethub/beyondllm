@@ -1,6 +1,6 @@
 from .embeddings.azureOpenAIEmbeddings import AzureEmbeddings
-from .embeddings.huggingfaceEmbeddings import HuggingFaceEmbeddings
-from .embeddings.huggingfaceInferenceEmbeddings import HuggingFaceInferenceEmbedding
+from .embeddings.hf import HuggingFaceEmbeddings
+from .embeddings.inference import HuggingFaceInferenceEmbedding
 # from .embeddings.evaluate import evaluateEmbeddings
 
 def get_embed_model(model_name="AzureOpenAI", **kwargs):
