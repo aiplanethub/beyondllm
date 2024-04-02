@@ -12,7 +12,7 @@ class OpenAIEmbeddings:
     embed_model = OpenAIEmbeddings(model_name="text-embedding-3-small",api_key="sk-")
     """
     api_key: str
-    model_name:  str = Field(default='text-embedding-3-small')
+    model_name:  str = 'text-embedding-3-small'
 
     def __post_init__(self):
         self.load()
@@ -38,6 +38,10 @@ class OpenAIEmbeddings:
     def get_text_embedding_batch(self,*args, **kwargs):
         batch = self.client.get_text_embedding_batch(*args, **kwargs)
         return batch
+    
+    def get_agg_embedding_from_queries(self,*args,**kwargs):
+        agg_embedding = self.client.get_agg_embedding_from_queries(*args, **kwargs)
+        return agg_embedding
 
     @staticmethod
     def load_from_kwargs(kwargs): 
