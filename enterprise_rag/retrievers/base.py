@@ -12,8 +12,7 @@ class BaseRetriever:
         raise NotImplementedError("This method should be implemented by subclasses.")
     
     def retrieve(self,query):
-        retriever = self.as_retriever()
-        return retriever.retrieve(query)
+        raise NotImplementedError("This method should be implemented by subclasses.")
 
     def evaluate(self,llm):
         nodes = self.data
