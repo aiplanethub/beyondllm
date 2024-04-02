@@ -1,7 +1,6 @@
 from .base import BaseRetriever
 from llama_index.core import VectorStoreIndex, ServiceContext
 
-
 class NormalRetriever(BaseRetriever):
     def __init__(self, data, embed_model, top_k,*args, **kwargs):
         super().__init__(data, embed_model,*args, **kwargs)
@@ -16,6 +15,10 @@ class NormalRetriever(BaseRetriever):
         )
         return index
     
+    def retrieve(self, query):
+        retriever = self.as_retriever()
+        return retriever.retrieve(query)
+
     def as_retriever(self):
         index = self.load_index()
 
