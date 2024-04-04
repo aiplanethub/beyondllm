@@ -1,5 +1,5 @@
 from enterprise_rag.llms import ChatOpenAIModel
-from enterprise_rag.utils import CONTEXT_RELEVENCE,GROUNDEDNESS,ANSWER_RELEVENCE
+#from enterprise_rag.utils import CONTEXT_RELEVENCE,GROUNDEDNESS,ANSWER_RELEVENCE
 
 import os
 from .base import BaseGenerator,GeneratorConfig
@@ -25,15 +25,17 @@ class Generate:
     groundness = 
     """
     question: str
-    retriever = ''
+    retriever:str = ''
     llm: ChatOpenAIModel = field(default_factory=default_llm)
     
     def __post_init__(self):
-        self.generate()
+        self.pipeline()
 
-    def generate(self):
-        self.CONTEXT = self.retriever.retrieve(self.question)[0]
-        print(self.CONTEXT)
+    def pipeline(self):
+        self.CONTEXT = ""
+        for node in self.retriever.retrieve(self.question):
+            self.CONTEXT += node.node.text
+        
         template = f"""
         You are an AI assistant who always answer to the user QUERY within the given CONTEXT \
         You are only job here it to act as knowledge transfer and given accurate response to QUERY by looking in depth into CONTEXT \
@@ -44,7 +46,9 @@ class Generate:
         CONTEXT: {self.CONTEXT }
         QUERY: {self.question}
         """
+
         self.RESPONSE = self.llm.predict(template)
+        return self.CONTEXT,self.RESPONSE
 
     def call(self):
         return self.RESPONSE
@@ -64,7 +68,7 @@ class Generate:
         return f"Groundness score: {GROUNDEDNESS(self.response,self.question)}"
 
     @staticmethod
-    def load_from_kwargs(kwargs): 
+    def load_from_kwargs(self,kwargs): 
         model_config = GeneratorConfig(**kwargs)
         self.config = model_config
-        self.generate()
+        self.pipeline()

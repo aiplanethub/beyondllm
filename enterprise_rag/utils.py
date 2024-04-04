@@ -1,5 +1,7 @@
 def CONTEXT_RELEVENCE(context,question):
-    return f""" As a RELEVANCE grader, your task is to rate the CONTEXT's RELEVANCE to the QUESTION on a scale from 0 to 10, where 0 signifies least RELEVANT and 10 the most RELEVANT. Length of the CONTEXT is not a factor in determining its RELEVANCE. Respond only as a number from 0 to 10 where 0 is the least relevant and 10 is the most relevant.
+    total_score = 0
+    score_count = 0
+    prompt = """ As a RELEVANCE grader, your task is to rate the CONTEXT's RELEVANCE to the QUESTION on a scale from 0 to 10, where 0 signifies least RELEVANT and 10 the most RELEVANT. Length of the CONTEXT is not a factor in determining its RELEVANCE. Respond only as a number from 0 to 10 where 0 is the least relevant and 10 is the most relevant.
     Follow these guidelines for scoring:
 
     - Length Irrelevant: The length of CONTEXT does not impact its score.
@@ -11,11 +13,25 @@ def CONTEXT_RELEVENCE(context,question):
     - Perfect Score: To achieve a score of 10, the CONTEXT must be completely RELEVANT and helpful in answering the entire QUESTION.
 
     QUESTION: {question}
-
     CONTEXT: {context}
 
     RELEVANCE:
     """
+    for context in context:
+        score_str = self.evaluater.predict(CONTEXT_RELEVENCE.format(question=question, context=context))
+        try:
+            score = float(score_str)
+            total_score += score
+            score_count += 1
+        except ValueError:
+            print("Invalid score format:", score_str)
+
+    if score_count > 0:
+        average_score = total_score / score_count
+    else:
+        average_score = 0
+    return average_score
+    
 
 def ANSWER_RELEVENCE(response,question):
     return f"""
@@ -65,44 +81,19 @@ def GROUNDEDNESS(statement,context):
     Score:
     """
 
-
-from enterprise_rag.utils import CONTEXT_RELEVENCE,GROUNDEDNESS,ANSWER_RELEVENCE
-
-import re
-from typing import List
-import pysbd
-import numpy as np
-
 class Evaluator:
     def context_relevance(self, question):
         try:
             response = self.auto_retriever.retrieve(question)
-            
-            entire_context = [node_with_score.node.text for node_with_score in response]
-            total_score = 0
-            score_count = 0
-
-            for context in entire_context:
-
-                score_str = self.evaluater.predict(CONTEXT_RELEVENCE.format(question=question, context=context))
-            
-                try:
-                    score = float(score_str)
-                    total_score += score
-                    score_count += 1
-                except ValueError:
-                    print("Invalid score format:", score_str)
-
-            if score_count > 0:
-                average_score = total_score / score_count
-            else:
-                average_score = 0
-            return average_score
         except Exception as e:
             print(f"Failed during context relevance evaluation: {e}")
             
     
     def answer_relevance(self, question):
+        import re
+        from typing import List
+        import pysbd
+        import numpy as np
         try:
             response = self.llm.query(question)
             print("Response from the generator:", response.response)

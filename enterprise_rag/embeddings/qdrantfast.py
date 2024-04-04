@@ -1,7 +1,6 @@
 from .base import BaseEmbeddings,EmbeddingConfig
-from pydantic import Field
 from typing import Any, Optional
-from dataclasses import dataclass
+from dataclasses import dataclass,field
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -11,7 +10,7 @@ class FastEmbedEmbeddings:
     from enterprise_rag.embeddings import FastEmbedEmbeddings
     embed_model = FastEmbedEmbeddings()
     """
-    model_name:  str = Field(default='BAAI/bge-small-en-v1.5')
+    model_name:  str = field(default='BAAI/bge-small-en-v1.5')
 
     def __post_init__(self):
         self.load()
@@ -43,7 +42,7 @@ class FastEmbedEmbeddings:
         return agg_embedding
 
     @staticmethod
-    def load_from_kwargs(kwargs): 
+    def load_from_kwargs(self,kwargs): 
         embed_config = EmbeddingConfig(**kwargs)
         self.config = embed_config
         self.load()
