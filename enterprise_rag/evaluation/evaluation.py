@@ -7,7 +7,7 @@ except ImportError as e:
     missing_package = str(e).split("'")[-2]  
     raise ImportError(f"{missing_package} is required for this module. Please install it with `pip install {missing_package}`.")
 
-from enterprise_rag.evaluation.prompts import CONTEXT_RELEVENCE, ANSWER_RELEVENCE, GROUNDEDNESS
+from enterprise_rag.evaluation.prompts import CONTEXT_RELEVENCE, ANSWER_RELEVENCE, GROUNDEDNESS, GROUND_TRUTH
 
 from enterprise_rag.llms import ChatOpenAIModel
 
@@ -82,6 +82,13 @@ class Evaluation:
         
         except Exception as e:
             raise Exception("Failed during groundedness evaluation: ", str(e))
+        
+    def ground_truth(self, question, answer):
+        response = self.llm.query(question)
+        score_response = self.evaluater.predict(GROUND_TRUTH.format(ground_truth=answer, generated_response=response.response))
+        score = extract_number(score_response)
+        print("Ground Truth Score:", score)
+
 
 
 def sent_tokenize(text: str) -> List[str]:

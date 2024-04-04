@@ -67,5 +67,31 @@ CONTEXT: {context}
 Score:
 """
 
+GROUND_TRUTH = """
+You are a RELEVANCE grader; providing the relevance of the given GROUND_TRUTH to the given GENERATED_RESPONSE.
+Respond only as a number from 0 to 10 where 0 is the least relevant and 10 is the most relevant.
+
+A few additional scoring guidelines:
 
 
+- RELEVANCE score should increase as the GENERATED_RESPONSE provides more RELEVANT context to the GROUND_TRUTH.
+
+- RELEVANCE score should increase as the GENERATED_RESPONSE provides RELEVANT context to more parts of the GROUND_TRUTH.
+
+- GENERATED_RESPONSE that is RELEVANT to some of the GROUND_TRUTH should score of 2, 3 or 4. Higher score indicates more RELEVANCE.
+
+- GENERATED_RESPONSE that is RELEVANT to most of the GROUND_TRUTH should get a score of 5, 6, 7 or 8. Higher score indicates more RELEVANCE.
+
+- GENERATED_RESPONSE that is RELEVANT to the entire GROUND_TRUTH should get a score of 9 or 10. Higher score indicates more RELEVANCE.
+
+- GENERATED_RESPONSE must be relevant and helpful for answering the entire GROUND_TRUTH to get a score of 10.
+
+- Never elaborate.
+
+
+
+GROUND_TRUTH: {ground_truth}
+
+GENERATED_RESPONSE: {generated_response}
+
+RELEVANCE:"""
