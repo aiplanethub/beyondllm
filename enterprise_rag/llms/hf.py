@@ -1,7 +1,8 @@
 from .base import BaseLLMModel, ModelConfig
+import os
 from typing import Any, Dict, Optional
 from pydantic import Field
-from dataclasses import dataclass
+from dataclasses import dataclass,field
 
 @dataclass
 class HuggingFaceHubModel:
@@ -10,12 +11,23 @@ class HuggingFaceHubModel:
     Example: 
     from enterprise_rag.llms import HuggingFaceHubModel
     llm = HuggingFaceHubModel(model="huggingfaceh4/zephyr-7b-alpha",token="<replace_with_your_token>",model_kwargs={"max_new_tokens":512,"temperature":0.1})
+    or 
+    import os
+    os.environ['HUGGINGFACE_ACCESS_TOKEN'] = "hf_*************"
+    from enterprise_rag.llms import HuggingFaceHubModel
+    llm = HuggingFaceHubModel(model="huggingfaceh4/zephyr-7b-alpha",model_kwargs={"max_new_tokens":512,"temperature":0.1})
     """
-    token: str
+    
+    token: str = ""
     model: str = "HuggingFaceh4/zephyr-7b-alpha"
-    model_kwargs: Optional[Dict] = None
+    model_kwargs: dict = field(default_factory=lambda: {"max_new_tokens": 256, "temperature": 0.1, "repetition_penalty": 1.1})
+
 
     def __post_init__(self):
+        if not self.token:  
+            self.token = os.getenv('HUGGINGFACE_ACCESS_TOKEN') 
+            if not self.token: 
+                raise ValueError("HUGGINGFACE_ACCESS_TOKEN is not provided and not found in environment variables.")
         self.load_llm()
 
     def load_llm(self):
@@ -37,7 +49,7 @@ class HuggingFaceHubModel:
             raise ValueError("Model is not loaded. Please call load_llm() to load the model before making predictions.")
         
         return self.client.text_generation(prompt,**self.model_kwargs)
-
+    
     @staticmethod
     def load_from_kwargs(kwargs): 
         model_config = ModelConfig(**kwargs)
