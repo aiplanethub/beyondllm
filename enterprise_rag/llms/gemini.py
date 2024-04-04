@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional
 from .base import BaseLLMModel, ModelConfig
 from dataclasses import dataclass
+import os
 
 @dataclass
 class GeminiModel:
@@ -9,11 +10,20 @@ class GeminiModel:
     Example:
     from enterprise-rag.llms import GeminiModel
     llm = GeminiModel(model_name="gemini-pro",google_api_key = "<your_api_key>")
+    or 
+    import os
+    os.environ['GOOGLE_API_KEY'] = "***********" #replace with your key
+    from enterprise-rag.llms import GeminiModel
+    llm = GeminiModel(model_name="gemini-pro")
     """
-    google_api_key:str
+    google_api_key:str = ""
     model_name:str = "gemini-pro"
 
     def __post_init__(self):
+        if not self.google_api_key:  
+            self.google_api_key = os.getenv('GOOGLE_API_KEY') 
+            if not self.google_api_key: 
+                raise ValueError("GOOGLE_API_KEY is not provided and not found in environment variables.")
         self.load_llm()
 
     def load_llm(self):
