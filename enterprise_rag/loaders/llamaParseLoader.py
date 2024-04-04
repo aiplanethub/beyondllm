@@ -15,7 +15,7 @@ class LlamaParseLoader(BaseLoader):
         try:
             docs = LlamaParse(result_type="markdown",api_key=llama_parse_key).load_data(path)
         except:
-            raise 
+            raise ValueError("File not compatible/no result returned from Llamaparse")
         return docs
 
     def split(self, documents):
