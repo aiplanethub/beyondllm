@@ -58,7 +58,7 @@ class AzureOpenAIModel:
         return response.choices[0].message.content
 
     @staticmethod
-    def load_from_kwargs(kwargs): 
+    def load_from_kwargs(self,kwargs): 
         model_config = ModelConfig(**kwargs)
         self.config = model_config
         self.load_llm()

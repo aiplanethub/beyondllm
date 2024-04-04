@@ -1,7 +1,6 @@
 from .base import BaseEmbeddings,EmbeddingConfig
 from typing import Any, Optional
-from pydantic import Field
-from dataclasses import dataclass
+from dataclasses import dataclass,field
 
 @dataclass
 class HuggingFaceEmbeddings:
@@ -9,7 +8,7 @@ class HuggingFaceEmbeddings:
     from enterprise_rag.embeddings import HuggingFaceEmbeddings
     embed_model = HuggingFaceEmbeddings(model_name="")
     """
-    model_name:  str = Field(default='BAAI/bge-small-en-v1.5')
+    model_name:  str = field(default='BAAI/bge-small-en-v1.5')
 
     def __post_init__(self):
         self.load()
@@ -41,7 +40,7 @@ class HuggingFaceEmbeddings:
         return agg_embedding
 
     @staticmethod
-    def load_from_kwargs(kwargs): 
+    def load_from_kwargs(self,kwargs): 
         embed_config = EmbeddingConfig(**kwargs)
         self.config = embed_config
         self.load()

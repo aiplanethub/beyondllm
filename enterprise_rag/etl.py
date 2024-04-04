@@ -1,8 +1,3 @@
-from .loaders.simpleLoader import SimpleLoader
-from .loaders.llamaParseLoader import LlamaParseLoader
-from .loaders.urlLoader import UrlLoader
-from .loaders.youtubeLoader import YoutubeLoader
-
 def fit(path,loader_type="pdf",**kwargs):
     """
     Fits the data from the given path using the appropriate loader based on the specified loader type.
@@ -26,12 +21,16 @@ def fit(path,loader_type="pdf",**kwargs):
     ]
 
     if loader_type in simple_loader_file_types and loader_type!='llama-parse':
+        from .loaders.simpleLoader import SimpleLoader
         loader = SimpleLoader(path,**kwargs)
     elif loader_type=="url":
+        from .loaders.urlLoader import UrlLoader
         loader = UrlLoader(path,**kwargs)
     elif loader_type=="youtube":
+        from .loaders.youtubeLoader import YoutubeLoader
         loader = YoutubeLoader(path,**kwargs)
     elif loader_type == 'llama-parse':
+        from .loaders.llamaParseLoader import LlamaParseLoader
         loader = LlamaParseLoader(path,**kwargs)
     else:
         raise NotImplementedError(f"Loader for the type '{loader_type}' is not implemented.")

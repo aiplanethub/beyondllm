@@ -1,9 +1,10 @@
 from .base import BaseEmbeddings,EmbeddingConfig
 from pydantic import Field
 from typing import Any, Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import warnings
 warnings.filterwarnings("ignore")
+import os
 
 @dataclass
 class OpenAIEmbeddings:
@@ -12,9 +13,13 @@ class OpenAIEmbeddings:
     embed_model = OpenAIEmbeddings(model_name="text-embedding-3-small",api_key="sk-")
     """
     api_key: str
-    model_name:  str = 'text-embedding-3-small'
+    model_name:  str = field(default='text-embedding-3-small')
 
     def __post_init__(self):
+        if not self.api_key:  
+            self.api_key = os.getenv('OPENAI_API_KEY') 
+            if not self.api_key: 
+                raise ValueError("OPENAI_API_KEY is not provided and not found in environment variables.")
         self.load()
 
     def load(self):
@@ -44,7 +49,7 @@ class OpenAIEmbeddings:
         return agg_embedding
 
     @staticmethod
-    def load_from_kwargs(kwargs): 
+    def load_from_kwargs(self,kwargs): 
         embed_config = EmbeddingConfig(**kwargs)
         self.config = embed_config
         self.load()

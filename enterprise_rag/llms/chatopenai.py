@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional
-from pydantic import Field
+import os
 from .base import BaseLLMModel, ModelConfig
-from dataclasses import dataclass
+from dataclasses import dataclass,field
 
 @dataclass
 class ChatOpenAIModel:
@@ -11,11 +11,15 @@ class ChatOpenAIModel:
     from enterprise-rag.llms import ChatOpenAIModel
     llm = ChatOpenAIModel(model="gpt-3.5-turbo",api_key = "",model_kwargs = {"max_tokens":512,"temperature":0.1})
     """
-    api_key: str
-    model: str = "gpt4"
+    api_key: str = ""
+    model: str = field(default="gpt-3.5-turbo")
     model_kwargs: Optional[Dict]  = None
 
     def __post_init__(self):
+        if not self.api_key:  
+            self.api_key = os.getenv('OPENAI_API_KEY') 
+            if not self.api_key: 
+                raise ValueError("OPENAI_API_KEY is not provided and not found in environment variables.")
         self.load_llm()
 
     def load_llm(self):
@@ -54,7 +58,7 @@ class ChatOpenAIModel:
         return response.choices[0].message.content
 
     @staticmethod
-    def load_from_kwargs(kwargs): 
+    def load_from_kwargs(self,kwargs): 
         model_config = ModelConfig(**kwargs)
         self.config = model_config
         self.load_llm()
