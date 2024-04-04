@@ -12,7 +12,7 @@ class OpenAIEmbeddings:
     from enterprise_rag.embeddings import OpenAIEmbeddings
     embed_model = OpenAIEmbeddings(model_name="text-embedding-3-small",api_key="sk-")
     """
-    api_key: str
+    api_key: str = ""
     model_name:  str = field(default='text-embedding-3-small')
 
     def __post_init__(self):
