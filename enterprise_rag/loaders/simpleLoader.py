@@ -9,6 +9,8 @@ class SimpleLoader(BaseLoader):
     A loader class for handling simple file types. Inherits from BaseLoader and implements
     the load and split methods for basic file processing.
     """
+    chunk_size: int = 512
+    chunk_overlap: int = 100
 
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs) 
