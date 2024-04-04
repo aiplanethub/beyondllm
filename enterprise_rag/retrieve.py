@@ -1,3 +1,7 @@
+import os
+os.environ['TOKENIZERS_PARALLELISM'] = 'true'
+
+from enterprise_rag.embeddings import FastEmbedEmbeddings
 from .retrievers.normalRetriever import NormalRetriever
 
 def auto_retriever(data,embed_model,type="normal",top_k=4,**kwargs):
