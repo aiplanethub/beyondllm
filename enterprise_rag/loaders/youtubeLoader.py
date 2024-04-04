@@ -12,7 +12,7 @@ except ImportError:
         subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-readers-youtube-transcript"])
         from llama_index.readers.youtube_transcript import YoutubeTranscriptReader
     else:
-        raise ImportError("The required 'llama_index.readers.web' is not installed.")
+        raise ImportError("The required 'llama-index-readers-youtube-transcript' is not installed.")
     
 
 class YoutubeLoader(BaseLoader):
