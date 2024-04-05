@@ -9,15 +9,15 @@ class BaseLoader:
     that must be implemented by subclasses to handle specific data loading and processing tasks.
     """
     path: str
-    chunk_size: int
-    chunk_overlap: int
+    chunk_size: int = 512
+    chunk_overlap: int = 100
 
     def load(self):
         """Load data from a given path. To be implemented by subclasses."""
         raise NotImplementedError("This method should be overridden by subclasses.")
 
     def split(self):
-        """Split the loaded document into parts. To be implemented by subclasses."""
+        """Split the loaded document into nodes. To be implemented by subclasses."""
         raise NotImplementedError("This method should be overridden by subclasses.")
 
     def fit(self, path):
@@ -30,6 +30,8 @@ class BaseLoader:
             
         Returns:
             List[TextNode]: The split nodes of the loaded document.
+
+        
         """
         documents = self.load(path)
         split_documents = self.split(documents)
