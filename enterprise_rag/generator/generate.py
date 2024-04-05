@@ -1,7 +1,8 @@
 from enterprise_rag.llms import ChatOpenAIModel
-#from enterprise_rag.utils import CONTEXT_RELEVENCE,GROUNDEDNESS,ANSWER_RELEVENCE
+from enterprise_rag.utils import CONTEXT_RELEVENCE,GROUNDEDNESS,ANSWER_RELEVENCE
 
-import os
+import os,re
+import numpy as np
 from .base import BaseGenerator,GeneratorConfig
 from dataclasses import dataclass,field
 
@@ -10,6 +11,12 @@ def default_llm():
     if not api_key:
         raise EnvironmentError("OPENAI_API_KEY must be set in the environment variables.")
     return ChatOpenAIModel(api_key=api_key)
+
+def extract_number(response):
+    match = re.search(r'\b(10|[0-9])\b', response)
+    if match:
+        return int(match.group(0))
+    return np.nan
 
 @dataclass
 class Generate:
@@ -57,9 +64,22 @@ class Generate:
         context_relevancy = None
         answer_relevancy = None
         groundness = None
+        def get_context_relevancy(self):
+        total_score = 0
+        score_count = 0
+        
+        for context in self.CONTEXT:
+            score_str = self.llm.predict(CONTEXT_RELEVENCE.format(question=self.question, context=context))
+            score = float(extract_number(score_str))
+            total_score += score
+            score_count += 1
 
-    def get_context_relevancy(self):
-        return f"Context relevancy Score: {CONTEXT_RELEVENCE(self.CONTEXT,self.question)}"
+        if score_count > 0:
+            average_score = total_score / score_count
+        else:
+            average_score = 0
+
+        return f"Context relevancy Score: {average_score}"
 
     def get_answer_relevancy(self):
         return f"Answer relevancy Score: {ANSWER_RELEVENCE(self.RESPONSE,self.question)}"
