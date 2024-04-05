@@ -64,7 +64,8 @@ class Generate:
         context_relevancy = None
         answer_relevancy = None
         groundness = None
-        def get_context_relevancy(self):
+        
+    def get_context_relevancy(self):
         total_score = 0
         score_count = 0
         
