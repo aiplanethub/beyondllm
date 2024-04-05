@@ -9,11 +9,33 @@ from llama_index.postprocessor.flag_embedding_reranker import FlagEmbeddingReran
 from llama_index.core.schema import QueryBundle
 
 class FlagEmbeddingRerankRetriever(BaseRetriever):
+    """
+    A retriever that uses Flag Embedding Reranker to rank and retrieve the most relevant documents.
+
+    Example:
+        from enterprise_rag.retrieve import auto_retrievers
+
+        data = ...  # Load your data
+        embed_model = # Load your embed model
+        retriever = auto_retriever(data=data, embed_model=embed_model, type="flag-rerank", top_k=5)
+
+        results = retriever.retrieve("<your query>")
+    """
     def __init__(self, data, embed_model, top_k,*args, **kwargs):
+        """
+        Initializes a FlagEmbeddingRerankRetriever instance.
+
+        Args:
+            data: The dataset to be indexed or retrieved from.
+            embed_model: The embedding model used to generate embeddings for the data.
+            top_k: The top k similarity search results to be retrieved
+            reranker: The Flag embedding reranker model to use
+        """
         super().__init__(data, embed_model,*args, **kwargs)
         self.embed_model = embed_model
         self.data = data
         self.top_k = top_k
+        self.reranker = kwargs.get('reranker',"BAAI/bge-reranker-large")
 
     def load_index(self):
         service_context = ServiceContext.from_defaults(llm=None, embed_model=self.embed_model)
@@ -28,7 +50,7 @@ class FlagEmbeddingRerankRetriever(BaseRetriever):
 
         reranker = FlagEmbeddingReranker(
             top_n=self.top_k,
-            model="BAAI/bge-reranker-large",
+            model=self.reranker,
         )
 
         query_bundle = QueryBundle(query_str=query)
@@ -41,7 +63,7 @@ class FlagEmbeddingRerankRetriever(BaseRetriever):
 
         reranker = FlagEmbeddingReranker(
             top_n=self.top_k,
-            model="BAAI/bge-reranker-base",
+            model=self.reranker,
         )
 
         retriever_index= index.as_retriever(

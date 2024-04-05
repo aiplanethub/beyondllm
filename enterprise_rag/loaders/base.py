@@ -24,14 +24,18 @@ class BaseLoader:
         """
         Loads and splits the document, then returns the split parts.
         This method leverages the load and split methods.
+
+        Example:
+        from enterprise_rag.etl import fit
+
+        pdf_data = fit("/your/pdf/path.pdf",loader_type='pdf',chunk_size=512,chunk_overlap=50)
+        youtube_data = fit(path="your-youtube-url",loader_type='youtube')
         
         Parameters:
             path (str): The path to the data file.
             
         Returns:
             List[TextNode]: The split nodes of the loaded document.
-
-        
         """
         documents = self.load(path)
         split_documents = self.split(documents)

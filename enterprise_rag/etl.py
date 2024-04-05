@@ -15,7 +15,7 @@ def fit(path,dtype,**kwargs):
 
     Example:
     from enterprise_rag.etl import fit
-    data = fit("<your-file-path>",dtype="pdf",chunk_size=512,chunk_overlap=100)
+    data = fit("<your-file-path>",dtype="pdf",chunk_size=512,chunk_overlap=100,llama_parse_key="llx-")
     """
 
     simple_loader_file_types = [
