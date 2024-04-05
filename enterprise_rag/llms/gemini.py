@@ -49,7 +49,7 @@ class GeminiModel:
         return response.text
     
     @staticmethod
-    def load_from_kwargs(kwargs): 
+    def load_from_kwargs(self,kwargs): 
         model_config = ModelConfig(**kwargs)
         self.config = model_config
         self.load_llm()

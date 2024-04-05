@@ -51,7 +51,7 @@ class AzureAIEmbeddings:
         return agg_embedding
 
     @staticmethod
-    def load_from_kwargs(kwargs): 
+    def load_from_kwargs(self,kwargs): 
         embed_config = EmbeddingConfig(**kwargs)
         self.config = embed_config
         self.load()
