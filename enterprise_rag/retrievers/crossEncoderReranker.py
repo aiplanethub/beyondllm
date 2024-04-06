@@ -5,11 +5,33 @@ from llama_index.core.postprocessor import SentenceTransformerRerank
 from llama_index.core.schema import QueryBundle
 
 class CrossEncoderRerankRetriever(BaseRetriever):
+    """
+    A retriever that uses Cross Encoder Reranker to rank and retrieve the most relevant documents.
+
+    Example:
+        from enterprise_rag.retrieve import auto_retrievers
+
+        data = ...  # Load your data
+        embed_model = # Load your embed model
+        retriever = auto_retriever(data=data, embed_model=embed_model, type="cross-rerank", top_k=5)
+
+        results = retriever.retrieve("<your query>")
+    """
     def __init__(self, data, embed_model, top_k,*args, **kwargs):
+        """
+        Initializes a FlagEmbeddingRerankRetriever instance.
+
+        Args:
+            data: The dataset to be indexed or retrieved from.
+            embed_model: The embedding model used to generate embeddings for the data.
+            top_k: The top k similarity search results to be retrieved
+            reranker: The cross encoder reranker model to use
+        """
         super().__init__(data, embed_model,*args, **kwargs)
         self.embed_model = embed_model
         self.data = data
         self.top_k = top_k
+        self.reranker = kwargs.get('reranker',"cross-encoder/ms-marco-MiniLM-L-2-v2")
 
     def load_index(self):
         service_context = ServiceContext.from_defaults(llm=None, embed_model=self.embed_model)
@@ -24,7 +46,7 @@ class CrossEncoderRerankRetriever(BaseRetriever):
 
         reranker = SentenceTransformerRerank(
             top_n=self.top_k,
-            model="cross-encoder/ms-marco-MiniLM-L-2-v2",
+            model=self.reranker,
         )
 
         query_bundle = QueryBundle(query_str=query)
@@ -37,7 +59,7 @@ class CrossEncoderRerankRetriever(BaseRetriever):
 
         reranker = SentenceTransformerRerank(
             top_n=self.top_k,
-            model="cross-encoder/ms-marco-MiniLM-L-2-v2",
+            model=self.reranker,
         )
 
         retriever_index= index.as_retriever(

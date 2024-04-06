@@ -8,9 +8,11 @@ from dataclasses import dataclass
 @dataclass
 class LlamaParseLoader(BaseLoader):
     llama_parse_key: str = "llx-"
+    chunk_size: int = 512
+    chunk_overlap: int = 100
     
     def load(self, path):
-        """Load data from a file."""
+        """Load data from a file to be parsed by LlamaParse cloud API."""
         llama_parse_key = self.llama_parse_key or os.getenv('LLAMA_CLOUD_API_KEY')
         try:
             docs = LlamaParse(result_type="markdown",api_key=llama_parse_key).load_data(path)
