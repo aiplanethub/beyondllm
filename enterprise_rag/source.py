@@ -10,21 +10,21 @@ def fit(path,dtype,**kwargs):
         **kwargs: Additional keyword arguments to be passed to the selected loader.
     
     Returns:
-        The loaded and processed data by the specified loader.
+        The loaded and processed data List[TextNode] by the specified loader.
 
     Raises:
         NotImplementedError: If the dtype is not supported.
+
+    Example:
+    from enterprise_rag.source import fit
+    data = fit("<youtube-video-url>",dtype="youtube",chunk_size=512,chunk_overlap=100)
     """
 
     simple_loader_file_types = [
         "pdf", "csv", "docx", "epub", "hwp",
         "mbox", "md", "ppt", "pptx", "pptm"
     ]
-    # docx: docx2txt
-    # ppt: pip install torch transformers python-pptx Pillow
-    # mp4: pip install git+https://github.com/openai/whisper.git
-    # ipynb: nbconvert
-
+    
     if dtype in simple_loader_file_types and dtype!='llama-parse':
         loader = SimpleLoader(path,**kwargs)
     elif dtype=="url":

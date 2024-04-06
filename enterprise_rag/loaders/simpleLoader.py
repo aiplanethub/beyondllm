@@ -7,13 +7,12 @@ from dataclasses import dataclass
 class SimpleLoader(BaseLoader):
     """
     A loader class for handling simple file types. Inherits from BaseLoader and implements
-    the load and split methods for basic file processing.
+    the load and split methods for basic file processing. 
+
+    Supported file types: pdf", "csv", "docx", "epub", "md", "ppt", "pptx", "pptm"
     """
     chunk_size: int = 512
     chunk_overlap: int = 100
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs) 
 
     def load(self, path):
         """Load data from a file."""
@@ -21,7 +20,10 @@ class SimpleLoader(BaseLoader):
         return docs
 
     def split(self, documents):
-        """Chunk the loaded document based on size and overlap"""
+        """
+        Chunk the loaded document based on size and overlap. 
+        Recursively splits data and tries to keep sentences and paragraphs whole
+        """
         splitter = SentenceSplitter(
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,

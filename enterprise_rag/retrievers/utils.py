@@ -64,24 +64,12 @@ def generate_qa_embedding_pairs(
     )
 
 def generate_qa_dataset(llm,nodes):
-    prompt = """\
-    Context information is below.
-
-    ---------------------
-    {context_str}
-    ---------------------
-
-    Given the context information and not prior knowledge, generate only questions based on the below query.
-
-    You are a Teacher/ Professor. Your task is to setup {num_questions_per_chunk} questions for an upcoming quiz/examination.
-    The questions should be diverse in nature across the document. Restrict the questions to the context information provided."
-    """
     print("Generating QA dataset....")
 
     qa_dataset = generate_qa_embedding_pairs(
         llm=llm,
         nodes=nodes,
-        qa_generate_prompt_tmpl = prompt,
+        qa_generate_prompt_tmpl = DEFAULT_QA_GENERATE_PROMPT_TMPL,
         num_questions_per_chunk=2
     )
 
@@ -118,4 +106,4 @@ def evaluate_from_dataset(dataset, retriever):
 def evaluate_retriever(llm, nodes, retriever):
     qa_dataset = generate_qa_dataset(llm,nodes)
     hit_rate, mrr = evaluate_from_dataset(qa_dataset,retriever)
-    return {"hit_rate":hit_rate,"mrr":mrr}
+    return f"Hit_rate:{hit_rate}\nMRR:{mrr}"

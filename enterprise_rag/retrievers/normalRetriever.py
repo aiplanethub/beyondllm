@@ -2,7 +2,27 @@ from .base import BaseRetriever
 from llama_index.core import VectorStoreIndex, ServiceContext
 
 class NormalRetriever(BaseRetriever):
+    """
+    A simple retriever that uses vector similarity search to retrieve relevant documents.
+
+    Example:
+        from enterprise_rag.retrieve import auto_retrievers
+
+        data = ...  # Load your data
+        embed_model = # Load your embed model
+        retriever = auto_retriever(data=data, embed_model=embed_model, type="normal", top_k=5)
+
+        results = retriever.retrieve("<your query>")
+    """
     def __init__(self, data, embed_model, top_k,*args, **kwargs):
+        """
+        Initializes a NormalRetriever instance.
+
+        Args:
+            data: The dataset to be indexed.
+            embed_model: The embedding model to use.
+            top_k: The number of top results to retrieve.
+        """
         super().__init__(data, embed_model,*args, **kwargs)
         self.embed_model = embed_model
         self.data = data
@@ -34,4 +54,3 @@ class NormalRetriever(BaseRetriever):
         query_engine = self.as_query_engine()
 
         return query_engine(user_query)
-    

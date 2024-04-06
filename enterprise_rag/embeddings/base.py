@@ -8,9 +8,6 @@ class EmbeddingConfig(BaseModel):
     pass 
 
 class BaseEmbeddings(BaseModel):
-    def __init__(self, model_name="AzureOpenAI",**kwargs):
-        self.model_name = model_name
-
     def load(self):
         raise NotImplementedError("This method should be implemented by subclasses.")
     
@@ -20,7 +17,7 @@ class BaseEmbeddings(BaseModel):
 
     def get_text_embedding_batch(self, *args, **kwargs):
         """
-        Get embeddings in batch from Azure OpenAI.
+        Get embeddings in batch.
         """
         embed_model = self.load()
         return embed_model.get_text_embedding_batch(*args, **kwargs)

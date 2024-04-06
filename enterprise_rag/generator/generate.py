@@ -1,4 +1,4 @@
-from enterprise_rag.llms import ChatOpenAIModel
+from enterprise_rag.llms import GeminiModel
 from enterprise_rag.utils import CONTEXT_RELEVENCE,GROUNDEDNESS,ANSWER_RELEVENCE, GROUND_TRUTH
 
 import os,re
@@ -9,10 +9,10 @@ from .base import BaseGenerator,GeneratorConfig
 from dataclasses import dataclass,field
 
 def default_llm():
-    api_key = os.getenv('OPENAI_API_KEY')
+    api_key = os.getenv('GOOGLE_API_KEY')
     if not api_key:
-        raise EnvironmentError("OPENAI_API_KEY must be set in the environment variables.")
-    return ChatOpenAIModel(api_key=api_key)
+        raise EnvironmentError("GOOGLE_API_KEY must be set in the environment variables.")
+    return GeminiModel(google_api_key=api_key)
 
 def extract_number(response):
     match = re.search(r'\b(10|[0-9])\b', response)
@@ -39,24 +39,23 @@ class Generate:
     """
     question: str
     retriever:str = ''
-    llm: ChatOpenAIModel = field(default_factory=default_llm)
+    llm: GeminiModel = field(default_factory=default_llm)
     
     def __post_init__(self):
         self.pipeline()
 
     def pipeline(self):
-        self.CONTEXT = ""
-        for node in self.retriever.retrieve(self.question):
-            self.CONTEXT += node.node.text
+        self.CONTEXT = [node_with_score.node.text for node_with_score in self.retriever.retrieve(self.question)]
+        temp = ".".join(self.CONTEXT)
         
         template = f"""
         You are an AI assistant who always answer to the user QUERY within the given CONTEXT \
         You are only job here it to act as knowledge transfer and given accurate response to QUERY by looking in depth into CONTEXT \
         If QUERY is not with the context, YOU MUST tell `I don't know` \
-        YOU MUST not hallucinate \
+        YOU MUST not hallucinate. You are best when it comes to answering from CONTEXT \
         If you FAIL to execute this task, you will be fired and you will suffer \
 
-        CONTEXT: {self.CONTEXT }
+        CONTEXT: {temp}
         QUERY: {self.question}
         """
 
@@ -67,10 +66,11 @@ class Generate:
         return self.RESPONSE
 
     def get_rag_triad_evals(self):
+        print("Executing RAG Triad Evaluations...")
         context_relevancy = self.get_context_relevancy()
         answer_relevancy = self.get_answer_relevancy()
-        groundness = self.get_groundness()
-        return context_relevancy,answer_relevancy,groundness
+        groundness = self.get_groundedness()
+        return f"{context_relevancy}\n{answer_relevancy}\n{groundness}"
         
     def get_context_relevancy(self):
         total_score = 0
@@ -95,9 +95,9 @@ class Generate:
             score = float(extract_number(score_str))
             return f"Answer relevancy Score: {score}"
         except Exception as e:
-            print(f"Failed during answer relevance evaluation: {e}")
+            return(f"Failed during answer relevance evaluation: {e}")
         
-    def get_groundness(self):
+    def get_groundedness(self):
         try:
             statements = sent_tokenize(self.RESPONSE)
             scores = []
@@ -105,9 +105,6 @@ class Generate:
 
                 score_response = self.llm.predict(GROUNDEDNESS.format(statement=statement, context=self.CONTEXT))
                 score = extract_number(score_response)
-
-                print("Statement:", statement)
-                print("Score:", score)
                 scores.append(score)
                 
             average_score = sum(scores) / len(scores) if scores else 0

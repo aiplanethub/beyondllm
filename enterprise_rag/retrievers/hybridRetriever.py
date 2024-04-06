@@ -51,11 +51,38 @@ class CustomRetriever(LlamaBaseRetriever):
 
 
 class HybridRetriever(BaseRetriever):
+    """
+    A hybrid retriever that combines the results of vector similarity search and Keyword search
+    to retrieve relevant documents.
+
+    Example:
+        from enterprise_rag.retrieve import auto_retriever
+
+        data = ...  # Load your data
+        embed_model = # Load your embed model
+        retriever = auto_retriever(data=data, embed_model=embed_model, type="hybrid", top_k=5, mode="AND")
+
+        results = retriever.retrieve("<your query>")
+    """
     def __init__(self, data, embed_model, top_k,*args, **kwargs):
+        """
+        Initializes a HybridRetriever instance.
+
+        Args:
+            data: The dataset to be indexed.
+            embed_model: The embedding model to use.
+            top_k: The number of top results to retrieve.
+            mode: Possible options are 'AND' or 'OR'. To be specified only for type = 'hybrid. 'AND' mode will retrieve nodes in common between
+                    keyword and vector retriever. top_k will be overridden in this case.
+        """
         super().__init__(data, embed_model,*args, **kwargs)
         self.embed_model = embed_model
         self.data = data
         self.top_k = top_k
+        self.mode = kwargs.get('mode', 'AND')  
+
+        if self.mode not in ['AND', 'OR']:
+            raise ValueError("Invalid mode. Mode must be 'AND' or 'OR'.")
 
     def load_index(self):
         service_context = ServiceContext.from_defaults(llm=None, embed_model=self.embed_model)
@@ -68,18 +95,30 @@ class HybridRetriever(BaseRetriever):
         )
         return vector_index, keyword_index
     
-    def as_retriever(self,mode="AND"):
+    def as_retriever(self):
         vector_index, keyword_index = self.load_index()
 
         vector_retriever = vector_index.as_retriever(similarity_top_k=self.top_k)
         keyword_retriever = keyword_index.as_retriever(similarity_top_k=self.top_k)
 
-        custom_retriever = CustomRetriever(vector_retriever, keyword_retriever, mode)
+        custom_retriever = CustomRetriever(vector_retriever, keyword_retriever, self.mode)
 
         return custom_retriever
     
-    def retrieve(self, query, mode="AND"):
-        custom_retriever = self.as_retriever(mode)
+    def retrieve(self, query):
+        """
+        Method to retrieve relevant nodes for a user's query using vector search.
+        
+        Example:
+        from enterprise_rag.retrieve import auto_retrievers
+
+        data = ...  # Load your data
+        embed_model = # Load your embed model
+        retriever = auto_retriever(data=data, embed_model=embed_model, type="normal", top_k=5)
+
+        relevant_nodes = retriever.retrieve("<your query>")
+        """
+        custom_retriever = self.as_retriever()
 
         retrieve_nodes = custom_retriever.retrieve(query)
 
@@ -102,4 +141,3 @@ class HybridRetriever(BaseRetriever):
         custom_query_engine = self.as_query_engine()
 
         return custom_query_engine(user_query)
-    

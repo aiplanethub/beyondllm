@@ -15,12 +15,12 @@ class HuggingFaceHubModel:
     import os
     os.environ['HUGGINGFACE_ACCESS_TOKEN'] = "hf_*************"
     from enterprise_rag.llms import HuggingFaceHubModel
-    llm = HuggingFaceHubModel(model="huggingfaceh4/zephyr-7b-alpha",model_kwargs={"max_new_tokens":512,"temperature":0.1})
+    llm = HuggingFaceHubModel(model="HuggingFaceh4/zephyr-7b-beta",model_kwargs={"max_new_tokens":512,"temperature":0.1})
     """
     
     token: str = ""
-    model: str = "HuggingFaceh4/zephyr-7b-alpha"
-    model_kwargs: dict = field(default_factory=lambda: {"max_new_tokens": 256, "temperature": 0.1, "repetition_penalty": 1.1})
+    model: str = "HuggingFaceh4/zephyr-7b-beta"
+    model_kwargs: dict = field(default_factory=lambda: {"max_new_tokens":1024,"temperature": 0.1,"top_p":0.95,"repetition_penalty": 1.1,"return_full_text": False})
 
 
     def __post_init__(self):

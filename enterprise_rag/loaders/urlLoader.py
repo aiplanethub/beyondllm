@@ -1,3 +1,4 @@
+
 from .base import BaseLoader
 from llama_index.core.node_parser import SentenceSplitter
 import subprocess
@@ -5,20 +6,24 @@ import sys
 try:
     from llama_index.readers.web import SimpleWebPageReader
 except ImportError:
-    user_agree = input("The feature you're trying to use requires an additional library. Would you like to install it now? [y/N]: ")
+    user_agree = input("The feature you're trying to use requires an additional library:llama_index.readers.web Would you like to install it now? [y/N]: ")
     if user_agree.lower() == 'y':
         subprocess.check_call([sys.executable, "-m", "pip", "install", "llama_index.readers.web"])
         from llama_index.readers.web import SimpleWebPageReader
     else:
         raise ImportError("The required 'llama_index.readers.web' is not installed.")
-    
+from dataclasses import dataclass
 
+@dataclass    
 class UrlLoader(BaseLoader):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs) 
+    chunk_size: int = 512
+    chunk_overlap: int = 100
 
     def load(self, path):
-        """Load web page data from a file."""
+        """
+        Load web page data from a file. 
+        Requires a url to be passed to read the HTML data of the page.
+        """
         docs = SimpleWebPageReader(html_to_text=True).load_data(
             [path]
         )

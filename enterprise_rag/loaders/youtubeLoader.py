@@ -14,13 +14,15 @@ except ImportError:
     else:
         raise ImportError("The required 'llama-index-readers-youtube-transcript' is not installed.")
     
+from dataclasses import dataclass
 
+@dataclass
 class YoutubeLoader(BaseLoader):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs) 
+    chunk_size: int = 512
+    chunk_overlap: int = 100
 
     def load(self, path):
-        """Load web page data from a file."""
+        """Load youtube video transcript data from the URL of the video."""
         loader = YoutubeTranscriptReader()
         docs = loader.load_data(
             ytlinks=[path]
