@@ -24,6 +24,12 @@ def sent_tokenize(text: str) -> List[str]:
     seg = pysbd.Segmenter(language="en", clean=False)
     return seg.segment(text)
 
+def threholdCheck(score):
+    if score >= 8:
+        return "Good Score"
+    else:
+        return "Needs Improvement"
+
 @dataclass
 class Generate:
     """
@@ -93,13 +99,14 @@ class Generate:
         else:
             average_score = 0
 
-        return f"Context relevancy Score: {average_score}"
+        return f"Context relevancy Score: {round(average_score, 1)}, {threholdCheck(average_score)}"
 
     def get_answer_relevancy(self):
         try:
             score_str = self.llm.predict(ANSWER_RELEVENCE.format(question=self.question, context= self.RESPONSE))
             score = float(extract_number(score_str))
-            return f"Answer relevancy Score: {score}"
+    
+            return f"Answer relevancy Score: {round(score, 1)}, {threholdCheck(score)}"
         except Exception as e:
             return(f"Failed during answer relevance evaluation: {e}")
         
@@ -114,7 +121,8 @@ class Generate:
                 scores.append(score)
                 
             average_score = sum(scores) / len(scores) if scores else 0
-            return f"Groundness score: {average_score}"
+            
+            return f"Groundness score: {round(average_score, 1)}, {threholdCheck(average_score)}"
         
         except Exception as e:
             raise Exception("Failed during groundedness evaluation: ", str(e))
@@ -125,7 +133,8 @@ class Generate:
             return
         score_str = self.llm.predict(GROUND_TRUTH.format(ground_truth=answer, generated_response=self.RESPONSE))
         score = extract_number(score_str)
-        return f"Ground truth score: {score}"
+        
+        return f"Ground truth score: {round(score, 1)}, {threholdCheck(score)}"
         
 
     @staticmethod
