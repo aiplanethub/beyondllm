@@ -1,4 +1,4 @@
-# Chat with your Powerpoint file
+# Chat with your Powerpoint file + Gradio Inference
 
 ## Import the required libraries
 
