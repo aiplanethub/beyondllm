@@ -36,6 +36,11 @@ class BaseLoader:
             
         Returns:
             List[TextNode]: The split nodes of the loaded document.
+
+        Example:
+        from enterprise_rag.source import fit
+        pdf_data = fit("/your/pdf/path.pdf",loader_type='pdf',chunk_size=512,chunk_overlap=50)
+        youtube_data = fit(path="your-youtube-url",loader_type='youtube')
         """
         documents = self.load(path)
         split_documents = self.split(documents)

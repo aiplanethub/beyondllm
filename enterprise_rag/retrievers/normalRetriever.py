@@ -54,4 +54,3 @@ class NormalRetriever(BaseRetriever):
         query_engine = self.as_query_engine()
 
         return query_engine(user_query)
-    

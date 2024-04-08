@@ -141,4 +141,3 @@ class HybridRetriever(BaseRetriever):
         custom_query_engine = self.as_query_engine()
 
         return custom_query_engine(user_query)
-    

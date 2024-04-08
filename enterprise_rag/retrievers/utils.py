@@ -106,4 +106,4 @@ def evaluate_from_dataset(dataset, retriever):
 def evaluate_retriever(llm, nodes, retriever):
     qa_dataset = generate_qa_dataset(llm,nodes)
     hit_rate, mrr = evaluate_from_dataset(qa_dataset,retriever)
-    return {"hit_rate":hit_rate,"mrr":mrr}
+    return f"Hit_rate:{hit_rate}\nMRR:{mrr}"
