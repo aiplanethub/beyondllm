@@ -38,6 +38,7 @@ class Generate:
     groundness = 
     """
     question: str
+    system_prompt: str = None
     retriever:str = ''
     llm: GeminiModel = field(default_factory=default_llm)
     
@@ -47,13 +48,18 @@ class Generate:
     def pipeline(self):
         self.CONTEXT = [node_with_score.node.text for node_with_score in self.retriever.retrieve(self.question)]
         temp = ".".join(self.CONTEXT)
-        
+
+        if self.system_prompt is None:
+            self.system_prompt = """
+            You are an AI assistant who always answer to the user QUERY within the given CONTEXT \
+            You are only job here it to act as knowledge transfer and given accurate response to QUERY by looking in depth into CONTEXT \
+            If QUERY is not with the context, YOU MUST tell `I don't know` \
+            YOU MUST not hallucinate. You are best when it comes to answering from CONTEXT \
+            If you FAIL to execute this task, you will be fired and you will suffer \
+            """
+
         template = f"""
-        You are an AI assistant who always answer to the user QUERY within the given CONTEXT \
-        You are only job here it to act as knowledge transfer and given accurate response to QUERY by looking in depth into CONTEXT \
-        If QUERY is not with the context, YOU MUST tell `I don't know` \
-        YOU MUST not hallucinate. You are best when it comes to answering from CONTEXT \
-        If you FAIL to execute this task, you will be fired and you will suffer \
+        {self.system_prompt}
 
         CONTEXT: {temp}
         QUERY: {self.question}
