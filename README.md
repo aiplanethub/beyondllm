@@ -54,7 +54,7 @@ Install on Google Colab
 !ls
 ```
 
-## Quickstart Guide
+## Quickstart Guide- Chat with YouTube Video
 
 In this quick start guide, we'll demonstrate how to create a Chat with YouTube video RAG application using Enterprise RAG with less than 8 lines of code. This 8 lines of code includes:
 * Getting custom data source
@@ -63,15 +63,14 @@ In this quick start guide, we'll demonstrate how to create a Chat with YouTube v
 * Evaluating embeddings
 * Evaluating LLM responses
 
-### Chat with YouTube Video
-#### Approach-1: Using Default LLM and Embeddings
-Build customised RAG in less than 5 lines of code using Enterprise RAG. 
+### Approach-1: Using Default LLM and Embeddings
+
+Build customised RAG in less than ``5 lines of code`` using Enterprise RAG. 
 
 ```python
 from enterprise_rag import source,retrieve,generator
-from getpass import getpass
 import os
-os.environ['GOOGLE_API_KEY'] = getpass("Your Google API Key:")
+os.environ['GOOGLE_API_KEY'] = "Your Google API Key:"
 
 data = source.fit("https://www.youtube.com/watch?v=oJJyTztI_6g",dtype="youtube",chunk_size=512,chunk_overlap=50)
 retriever = retrieve.auto_retriever(data,type="normal",top_k=3)
@@ -80,7 +79,7 @@ pipeline = generator.Generate(question="what tool is video mentioning about?",re
 print(pipeline.call())
 ```
 
-#### Approach-2: With Custom LLM and Embeddings
+### Approach-2: With Custom LLM and Embeddings
 
 Enterprise RAG support various Embeddings and LLMs that are two very important components in Retrieval Augmented Generation. 
 
