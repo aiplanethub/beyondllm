@@ -1,4 +1,4 @@
-# Document Search and Chat
+# Document Search and Chat + Streamlit Inference
 
 ## Import the required libraries
 
