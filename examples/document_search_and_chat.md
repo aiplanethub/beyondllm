@@ -1,4 +1,4 @@
-# Chat with Document RAG Application
+# Document Search and Chat
 
 ## Import the required libraries
 
