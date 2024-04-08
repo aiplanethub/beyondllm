@@ -1,5 +1,5 @@
 <div align="center">
-<h1 align="center">Enterprise</h1>
+<h1 align="center">Enterprise-RAG</h1>
 <h2 align="center">Build - Quick Experiment - Evaluate - Repeat</h2>
 
 <a href="https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10-3776AB.svg?style=flat&logo=python&logoColor=white"><img src="https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10-3776AB.svg?style=flat&logo=python&logoColor=white" alt="Python Versions"></a>
