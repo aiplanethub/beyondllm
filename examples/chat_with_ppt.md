@@ -1,5 +1,11 @@
 # Chat with your Powerpoint file
 
+## Getting started on Colab
+
+Try out a quick demo of GenAI Stack on Google Colab:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1dJZF5113e5XQsm6GxuW3ShYCBZcUs3-_?usp=sharing)
+
 ## Import the required libraries
 
 ```python
@@ -45,4 +51,28 @@ print(pipeline.call())
 Sample response:
 
 The presentation focuses on exploring the depths of document generation using GPT-3.5. It entails a detailed walkthrough of the methodologies employed, shedding light on the current state, and presenting avenues for future advancements.
+```
+
+### Deploy Inference - Gradio
+```python
+import gradio as gr
+
+def predict(message, history, system_prompt, tokens):
+  response =  pipeline.call()
+  return response
+
+with gr.Blocks() as demo:
+    chatbot = gr.Chatbot()
+    msg = gr.Textbox()
+    clear = gr.ClearButton([msg, chatbot])
+
+    def predict(message, chat_history):
+      response = pipeline.call()
+      chat_history.append((message, response))
+      return "", chat_history
+
+
+    msg.submit(predict, [msg, chatbot], [msg, chatbot])
+
+demo.launch(share = True)
 ```
