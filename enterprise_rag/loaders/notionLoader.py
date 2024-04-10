@@ -22,7 +22,7 @@ class NotionLoader(BaseLoader):
     chunk_overlap: int = 100
 
     def load(self, path):
-        """Load Notion page data from the URL of the page."""
+        """Load Notion page data from the page ID of your Notion page: The hash value at the end of your URL"""
         integration_token = self.notion_integration_token or os.getenv('NOTION_INTEGRATION_TOKEN')
         loader = NotionPageReader(integration_token=integration_token)
         docs = loader.load_data(
