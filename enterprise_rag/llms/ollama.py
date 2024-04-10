@@ -37,11 +37,11 @@ class OllamaModel:
                     'role': 'user',
                     'content': prompt
                 }],
-                stream=True)
+                stream=False)
 
         except ollama.ResponseError:
             raise ollama.ResponseError("You need to pull model first. ollama pull <model-name>")
-        return response
+        return response['message']['content']
 
     @staticmethod
     def load_from_kwargs(self,kwargs): 
