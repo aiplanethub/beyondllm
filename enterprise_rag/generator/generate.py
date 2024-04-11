@@ -77,19 +77,24 @@ class Generate:
     def call(self):
         return self.RESPONSE
 
-    def get_rag_triad_evals(self):
+    def get_rag_triad_evals(self, llm = None):
+        if llm is None:
+            llm = self.llm
         print("Executing RAG Triad Evaluations...")
-        context_relevancy = self.get_context_relevancy()
-        answer_relevancy = self.get_answer_relevancy()
-        groundness = self.get_groundedness()
+        context_relevancy = self.get_context_relevancy(llm)
+        answer_relevancy = self.get_answer_relevancy(llm)
+        groundness = self.get_groundedness(llm)
         return f"{context_relevancy}\n{answer_relevancy}\n{groundness}"
         
-    def get_context_relevancy(self):
+    def get_context_relevancy(self, llm = None):
+        if llm is None:
+            llm = self.llm
+            
         total_score = 0
         score_count = 0
         
         for context in self.CONTEXT:
-            score_str = self.llm.predict(CONTEXT_RELEVENCE.format(question=self.question, context=context))
+            score_str = llm.predict(CONTEXT_RELEVENCE.format(question=self.question, context=context))
             score = float(extract_number(score_str))
             total_score += score
             score_count += 1
@@ -101,22 +106,26 @@ class Generate:
 
         return f"Context relevancy Score: {round(average_score, 1)}, {threholdCheck(average_score)}"
 
-    def get_answer_relevancy(self):
+    def get_answer_relevancy(self, llm = None):
+        if llm is None:
+            llm = self.llm
         try:
-            score_str = self.llm.predict(ANSWER_RELEVENCE.format(question=self.question, context= self.RESPONSE))
+            score_str = llm.predict(ANSWER_RELEVENCE.format(question=self.question, context= self.RESPONSE))
             score = float(extract_number(score_str))
     
             return f"Answer relevancy Score: {round(score, 1)}, {threholdCheck(score)}"
         except Exception as e:
             return(f"Failed during answer relevance evaluation: {e}")
         
-    def get_groundedness(self):
+    def get_groundedness(self, llm = None):
+        if llm is None:
+            llm = self.llm
         try:
             statements = sent_tokenize(self.RESPONSE)
             scores = []
             for statement in statements:
 
-                score_response = self.llm.predict(GROUNDEDNESS.format(statement=statement, context=self.CONTEXT))
+                score_response = llm.predict(GROUNDEDNESS.format(statement=statement, context=self.CONTEXT))
                 score = extract_number(score_response)
                 scores.append(score)
                 
@@ -127,11 +136,13 @@ class Generate:
         except Exception as e:
             raise Exception("Failed during groundedness evaluation: ", str(e))
 
-    def get_ground_truth(self, answer:str):
+    def get_ground_truth(self, answer:str, llm = None):
+        if llm is None:
+            llm = self.llm
         if answer is None:
             print("Error: Missing 'answer' parameter. Usage: get_ground_truth(answer=\"your_answer_here\").")
             return
-        score_str = self.llm.predict(GROUND_TRUTH.format(ground_truth=answer, generated_response=self.RESPONSE))
+        score_str = llm.predict(GROUND_TRUTH.format(ground_truth=answer, generated_response=self.RESPONSE))
         score = extract_number(score_str)
         
         return f"Ground truth score: {round(score, 1)}, {threholdCheck(score)}"

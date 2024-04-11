@@ -36,6 +36,9 @@ def fit(path,dtype,**kwargs):
     elif dtype == 'llama-parse':
         from .loaders.llamaParseLoader import LlamaParseLoader
         loader = LlamaParseLoader(path,**kwargs)
+    elif dtype == 'notion':
+        from .loaders.notionLoader import NotionLoader
+        loader = NotionLoader(path,**kwargs)
     else:
         raise NotImplementedError(f"Loader for the type '{dtype}' is not implemented.")
     
