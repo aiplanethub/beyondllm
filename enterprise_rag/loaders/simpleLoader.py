@@ -16,7 +16,8 @@ class SimpleLoader(BaseLoader):
 
     def load(self, path):
         """Load data from a file."""
-        docs = SimpleDirectoryReader(input_files=[path]).load_data()
+        input_files = path if isinstance(path, list) else [path]
+        docs = SimpleDirectoryReader(input_files=input_files).load_data()
         return docs
 
     def split(self, documents):

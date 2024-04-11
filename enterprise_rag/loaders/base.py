@@ -32,7 +32,7 @@ class BaseLoader:
         youtube_data = fit(path="your-youtube-url",loader_type='youtube')
         
         Parameters:
-            path (str): The path to the data file.
+            paths (str or List[str]): The path(s) to the data to be loaded. Can be a single path or a list of paths.
             
         Returns:
             List[TextNode]: The split nodes of the loaded document.
@@ -40,7 +40,7 @@ class BaseLoader:
         Example:
         from enterprise_rag.source import fit
         pdf_data = fit("/your/pdf/path.pdf",loader_type='pdf',chunk_size=512,chunk_overlap=50)
-        youtube_data = fit(path="your-youtube-url",loader_type='youtube')
+        youtube_data = fit(paths=["your-youtube-url-1","your-youtube-url-2"],loader_type='youtube')
         """
         documents = self.load(path)
         split_documents = self.split(documents)

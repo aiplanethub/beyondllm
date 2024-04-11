@@ -2,7 +2,9 @@ import os
 os.environ['TOKENIZERS_PARALLELISM'] = 'true'
 
 from enterprise_rag.embeddings import FastEmbedEmbeddings
-from .retrievers.normalRetriever import NormalRetriever
+from enterprise_rag.retrievers.normalRetriever import NormalRetriever
+from enterprise_rag.retrievers.utils import generate_qa_dataset, evaluate_from_dataset
+import pandas as pd
 
 def auto_retriever(data,embed_model=None,type="normal",top_k=4,**kwargs):
     """
@@ -43,3 +45,63 @@ def auto_retriever(data,embed_model=None,type="normal",top_k=4,**kwargs):
         retriever = HybridRetriever(data,embed_model,top_k,**kwargs)
 
     return retriever
+
+def compare_retrievers(data,llm, retrievers_list):
+    """
+    Compares multiple retrievers on a QA dataset, evaluating their hit rate and MRR.
+
+    Parameters:
+        data (List[TextNode]): The list of TextNodes to generate the QA dataset from.
+        llm (BaseLLMModel): The language model used to generate the QA dataset.
+        retrievers_list (List[BaseRetriever]): A list of retriever instances to evaluate.
+
+    Returns:
+        pandas.DataFrame: A DataFrame containing the hit rate and MRR for each retriever.
+    """
+    qa_dataset = generate_qa_dataset(llm, data)
+    
+    results = []
+
+    for retriever in retrievers_list:
+        hit_rate, mrr = evaluate_from_dataset(qa_dataset, retriever)
+        
+        results.append({
+            "Retriever": type(retriever).__name__,
+            "Hit Rate": hit_rate,
+            "MRR": mrr
+        })
+
+    results_df = pd.DataFrame(results)
+
+    return results_df
+
+
+def compare_embeddings(data,embed_model_list,llm,**kwargs):
+    """
+    Compares multiple embedding models using same retriever on a QA dataset, evaluating their hit rate and MRR.
+
+    Parameters:
+        data (List[TextNode]): The list of TextNodes to generate the QA dataset from.
+        llm (BaseLLMModel): The language model used to generate the QA dataset.
+        retrievers_list (List[BaseEmbeddings]): A list of retriever instances to evaluate.
+
+    Returns:
+        pandas.DataFrame: A DataFrame containing the hit rate and MRR for each retriever.
+    """
+    qa_dataset = generate_qa_dataset(llm, data)
+    
+    results = []
+
+    for embed_model in embed_model_list:
+        retriever = NormalRetriever(data,embed_model,**kwargs)
+        hit_rate, mrr = evaluate_from_dataset(qa_dataset, retriever)
+        
+        results.append({
+            "Embeddings model": type(embed_model).__name__,
+            "Hit Rate": hit_rate,
+            "MRR": mrr
+        })
+
+    results_df = pd.DataFrame(results)
+
+    return results_df

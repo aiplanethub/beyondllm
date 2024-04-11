@@ -2,10 +2,10 @@ from .loaders.simpleLoader import SimpleLoader
 
 def fit(path,dtype,**kwargs):
     """
-    Fits the data from the given path using the appropriate loader based on the specified loader type.
+    Fits the data from the given path(s) using the appropriate loader based on the specified loader type.
     
     Parameters:
-        path (str): The path to the data to be loaded.
+        paths (str or List[str]): The path(s) to the data to be loaded. Can be a single path or a list of paths.
         dtype (str): Specifies the type of loader to use based on the file type or source.
         **kwargs: Additional keyword arguments to be passed to the selected loader.
     
@@ -17,7 +17,11 @@ def fit(path,dtype,**kwargs):
 
     Example:
     from enterprise_rag.source import fit
-    data = fit("<youtube-video-url>",dtype="youtube",chunk_size=512,chunk_overlap=100)
+    # For a single path
+    pdf_data = fit("/path/to/your/pdf.pdf", dtype="pdf", chunk_size=1024, chunk_overlap=200)
+    
+    # For multiple paths
+    multiple_data = fit(["/path/to/your/pdf1.pdf", "/path/to/your/pdf2.pdf"], dtype="pdf")
     """
 
     simple_loader_file_types = [

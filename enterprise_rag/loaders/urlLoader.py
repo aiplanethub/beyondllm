@@ -24,8 +24,9 @@ class UrlLoader(BaseLoader):
         Load web page data from a file. 
         Requires a url to be passed to read the HTML data of the page.
         """
+        input_files = path if isinstance(path, list) else [path]
         docs = SimpleWebPageReader(html_to_text=True).load_data(
-            [path]
+            input_files
         )
         return docs
 

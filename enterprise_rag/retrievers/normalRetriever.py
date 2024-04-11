@@ -14,7 +14,7 @@ class NormalRetriever(BaseRetriever):
 
         results = retriever.retrieve("<your query>")
     """
-    def __init__(self, data, embed_model, top_k,*args, **kwargs):
+    def __init__(self, data, embed_model, top_k=4,*args, **kwargs):
         """
         Initializes a NormalRetriever instance.
 

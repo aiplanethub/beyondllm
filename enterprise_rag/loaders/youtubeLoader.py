@@ -2,7 +2,6 @@ from .base import BaseLoader
 from llama_index.core.node_parser import SentenceSplitter
 import subprocess
 import sys
-
 try:
     from llama_index.readers.youtube_transcript import YoutubeTranscriptReader
 except ImportError:
@@ -13,7 +12,6 @@ except ImportError:
         from llama_index.readers.youtube_transcript import YoutubeTranscriptReader
     else:
         raise ImportError("The required 'llama-index-readers-youtube-transcript' is not installed.")
-    
 from dataclasses import dataclass
 
 @dataclass
@@ -23,9 +21,10 @@ class YoutubeLoader(BaseLoader):
 
     def load(self, path):
         """Load youtube video transcript data from the URL of the video."""
+        input_files = path if isinstance(path, list) else [path]
         loader = YoutubeTranscriptReader()
         docs = loader.load_data(
-            ytlinks=[path]
+            ytlinks=input_files
         )
         return docs
 
