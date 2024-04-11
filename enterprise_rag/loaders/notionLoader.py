@@ -25,9 +25,10 @@ class NotionLoader(BaseLoader):
     def load(self, path):
         """Load Notion page data from the page ID of your Notion page: The hash value at the end of your URL"""
         integration_token = self.notion_integration_token or os.getenv('NOTION_INTEGRATION_TOKEN')
+        input_files = path if isinstance(path, list) else [path]
         loader = NotionPageReader(integration_token=integration_token)
         docs = loader.load_data(
-            page_ids=[path]
+            page_ids=input_files
         )
         return docs
 
