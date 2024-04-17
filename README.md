@@ -4,10 +4,15 @@
 
 ![Thumbnails](https://github.com/aiplanethub/enterprise_rag/assets/132284203/489bb644-f87e-4477-a639-a63552f84cd7)
 
-<a href="https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10-3776AB.svg?style=flat&logo=python&logoColor=white"><img src="https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10-3776AB.svg?style=flat&logo=python&logoColor=white" alt="Python Versions"></a>
+<a href="https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-3776AB.svg?style=flat&logo=python&logoColor=white"><img src="https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-3776AB.svg?style=flat&logo=python&logoColor=white" alt="Python Versions"></a>
 <a href="https://discord.gg/4aWV7He2QU"><img src="https://dcbadge.vercel.app/api/server/4aWV7He2QU?style=flat" alt="Discord" /></a>
 <a href="https://twitter.com/aiplanethub"><img src="https://img.shields.io/twitter/follow/aiplanethub" alt="Twitter" /></a>
-<!-- <a href="https://colab.research.google.com/drive/1y6_0MoNWjS9wugv0askP1Jb7zrY_sQT-?usp=sharing"><img src="https://camo.githubusercontent.com/84f0493939e0c4de4e6dbe113251b4bfb5353e57134ffd9fcab6b8714514d4d1/68747470733a2f2f636f6c61622e72657365617263682e676f6f676c652e636f6d2f6173736574732f636f6c61622d62616467652e737667" alt="Colab" /></a> -->
+<a href="https://colab.research.google.com/drive/1dJZF5113e5XQsm6GxuW3ShYCBZcUs3-_?usp=sharing" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Try an example"/></a>
+
+[![GitHub stars](https://img.shields.io/github/stars/aiplanethub/enterprise_rag.svg?style=flat-square)](https://github.com/aiplanethub/enterprise_rag/)
+[![License](https://img.shields.io/github/license/aiplanethub/enterprise_rag.svg?style=flat-square)](https://github.com/aiplanethub/enterprise_rag/blob/main/LICENSE)
+[![Contributors](https://img.shields.io/github/contributors/username/repo.svg?style=flat-square)](https://github.com/aiplanethub/enterprise_rag/graphs/contributors)
+[![Code of Conduct](https://img.shields.io/badge/code%20of%20conduct-contributor%20covenant-green.svg?style=flat-square)](CODE_OF_CONDUCT.md)
 
 <p>Enterprise RAG offers an all-in-one toolkit for experimentation, evaluation, and deployment of Retrieval-Augmented Generation (RAG) systems, simplifying the process with automated integration, customizable evaluation metrics, and support for various Large Language Models (LLMs) tailored to specific needs, ultimately aiming to reduce LLM hallucination risks and enhance reliability.</p>
 <i><a href="https://discord.gg/4aWV7He2QU">👉 Join our Discord community!</a></i>
