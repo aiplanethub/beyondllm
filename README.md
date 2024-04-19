@@ -9,9 +9,7 @@
 <a href="https://twitter.com/aiplanethub"><img src="https://img.shields.io/twitter/follow/aiplanethub" alt="Twitter" /></a>
 <a href="https://colab.research.google.com/drive/1S1UL2uCahHkfJsurRA3f7dcR6IHjg-IM?usp=sharing" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Try an example"/></a>
 
-[![GitHub stars](https://img.shields.io/github/stars/aiplanethub/beyondllm.svg?style=flat-square)](https://github.com/aiplanethub/beyondllm/)
-[![License](https://img.shields.io/github/license/aiplanethub/beyondllm.svg?style=flat-square)](https://github.com/aiplanethub/beyondllm/blob/main/LICENSE)
-[![Contributors](https://img.shields.io/github/contributors/username/repo.svg?style=flat-square)](https://github.com/aiplanethub/beyondllm/graphs/contributors)
+[![Contributors](https://img.shields.io/github/contributors/aiplanethub/beyondllm.svg?style=flat-square)](https://github.com/aiplanethub/beyondllm/graphs/contributors)
 [![Code of Conduct](https://img.shields.io/badge/code%20of%20conduct-contributor%20covenant-green.svg?style=flat-square)](CODE_OF_CONDUCT.md)
 
 <p>Beyond LLM offers an all-in-one toolkit for experimentation, evaluation, and deployment of Retrieval-Augmented Generation (RAG) systems, simplifying the process with automated integration, customizable evaluation metrics, and support for various Large Language Models (LLMs) tailored to specific needs, ultimately aiming to reduce LLM hallucination risks and enhance reliability.</p>
