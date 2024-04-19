@@ -7,7 +7,7 @@
 <a href="https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-3776AB.svg?style=flat&logo=python&logoColor=white"><img src="https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-3776AB.svg?style=flat&logo=python&logoColor=white" alt="Python Versions"></a>
 <a href="https://discord.gg/4aWV7He2QU"><img src="https://dcbadge.vercel.app/api/server/4aWV7He2QU?style=flat" alt="Discord" /></a>
 <a href="https://twitter.com/aiplanethub"><img src="https://img.shields.io/twitter/follow/aiplanethub" alt="Twitter" /></a>
-<a href="https://colab.research.google.com/drive/1dJZF5113e5XQsm6GxuW3ShYCBZcUs3-_?usp=sharing" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Try an example"/></a>
+<a href="https://colab.research.google.com/drive/1S1UL2uCahHkfJsurRA3f7dcR6IHjg-IM?usp=sharing" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Try an example"/></a>
 
 [![GitHub stars](https://img.shields.io/github/stars/aiplanethub/beyondllm.svg?style=flat-square)](https://github.com/aiplanethub/beyondllm/)
 [![License](https://img.shields.io/github/license/aiplanethub/beyondllm.svg?style=flat-square)](https://github.com/aiplanethub/beyondllm/blob/main/LICENSE)
@@ -20,45 +20,12 @@
 
 Try out a quick demo on Google Colab:
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1dJZF5113e5XQsm6GxuW3ShYCBZcUs3-_?usp=sharing)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1S1UL2uCahHkfJsurRA3f7dcR6IHjg-IM?usp=sharing)
 
 ## Quick install
 
-1. To install Beyond LLM i.e., a private repo, we can use Access Token of GitHub. 
-
-   ```bash
-   git clone https://<UPDATE-WITH-YOUR-TOKEN>@github.com/aiplanethub/beyondllm.git
-   ```
-
-3. Go to the project directory
-
-   ```bash
-   cd beyondllm
-   ```
-
-4. Install the package
-
-   ```bash
-   pip install .
-   ```
-
-   OR,
-
-   ```bash
-   pip install -e .
-   ```
-
-   When using the `-e` flag, the package is installed in editable mode. This means that if you make changes to the source code, you do not need to reinstall the package for the changes to take effect.
-
-Install on Google Colab
-
 ```bash
-!git clone https://<UPDATE-WITH-YOUR-TOKEN>@github.com/aiplanethub/beyondllm.git
-
-%cd /content/beyondllm/
-
-pip install .
-
+pip install beyondllm
 ```
 
 ## Quickstart Guide- Chat with YouTube Video
