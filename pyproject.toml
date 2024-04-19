@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "beyondllm"
+version = "0.0.1"
+description = "Beyond LLM is an toolkit to Build Experiment Evaluate and Observe RAG pipelines"
+authors = ["AI Planet <tech@aiplanet.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.9 | ~3.10 | ~3.11"
+llama-index = "0.10.27"
+llama-index-embeddings-gemini = "0.1.6"
+nltk = "3.8.1"
+numpy = "1.26.4"
+openai = "1.20.0"
+pydantic = "2.7.0"
+sqlalchemy = "2.0.29"
+pysbd = "0.3.4"
+pypdf = "4.2.0"
+pyyaml = "6.0.1"
+regex = "2024.4.16"
+tiktoken = "0.6.0"
+pandas = "2.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
