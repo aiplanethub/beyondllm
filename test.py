@@ -1,7 +1,7 @@
 from beyondllm import source,retrieve,embeddings,llms,generator
 from beyondllm.llms import GeminiModel
 import os
-os.environ['GOOGLE_API_KEY'] = "AIzaSyAsgNPR2-ve6QZqR9B5snRzW6Awm2-28o4"
+os.environ['GOOGLE_API_KEY'] = "YOUR-GOOGLE-API-KEY"
 
 data = source.fit(path="https://tarunjain.netlify.app", dtype="url",chunk_size=1024)
 retriever = retrieve.auto_retriever(data,type="normal")
