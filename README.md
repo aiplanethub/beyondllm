@@ -85,13 +85,16 @@ Answer relevancy Score: 7.0
 Groundness score: 7.666666666666667
 ```
 
-## Get in Touch
+## Documentation
 
-You can schedule a 1:1 meeting with our Team to get started with GenAI Stack, OpenAGI, AI Planet Open Source LLMs(Buddhi, effi and Panda Coder) and Beyond LLM. Schedule the call here: [https://calendly.com/jaintarun](https://calendly.com/jaintarun)
+See the [beyondllm.aiplanet.com](https://beyondllm.aiplanet.com/) for complete documentation.
+
 
 ## Contribution guidelines
 
 Beyond LLM thrives in the rapidly evolving landscape of open-source projects. We wholeheartedly welcome contributions in various capacities, be it through innovative features, enhanced infrastructure, or refined documentation.
+
+See [Contributing guide](https://github.com/aiplanethub/beyondllm/blob/main/CONTRIBUTING.md) for more information on contributing to the BeyondLLM library. 
 
 ## Acknowledgements
 
@@ -101,3 +104,11 @@ Beyond LLM thrives in the rapidly evolving landscape of open-source projects. We
 * [Google Gemini](https://ai.google.dev/)
   
 and the entire OpenSource community.
+
+## License
+
+The contents of this repository are licensed under the [Apache License, version 2.0](https://github.com/aiplanethub/beyondllm/blob/main/LICENSE).
+
+## Get in Touch
+
+You can schedule a 1:1 meeting with our Team to get started with GenAI Stack, OpenAGI, AI Planet Open Source LLMs(Buddhi, effi and Panda Coder) and Beyond LLM. Schedule the call here: [https://calendly.com/jaintarun](https://calendly.com/jaintarun)
