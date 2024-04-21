@@ -1,6 +1,7 @@
 from beyondllm.embeddings.base import EmbeddingConfig
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import warnings
+import os
 warnings.filterwarnings("ignore")
 
 @dataclass
@@ -9,12 +10,20 @@ class AzureAIEmbeddings:
     from beyondllm.embeddings import AzureAIEmbeddings
     embed_model = AzureAIEmbeddings(endpoint_url="https:---",azure_key="",api_version="",deployment_name="")
     """
-    azure_key: str
-    endpoint_url: str
-    api_version: str
     deployment_name: str
-
+    azure_key: str = ""
+    endpoint_url: str = ""
+    api_version: str = field(default='2023-05-15')
+    
     def __post_init__(self):
+        if not self.azure_key: 
+            self.azure_key = os.getenv('AZURE_KEY_EMBED') 
+            if not self.azure_key: 
+                raise ValueError("AZURE_KEY_EMBED is not provided and not found in environment variables.")
+        if not self.endpoint_url:
+            self.endpoint_url = os.getenv("ENDPOINT_URL_EMBED")
+            if not self.endpoint_url: 
+                raise ValueError("ENDPOINT_URL_EMBED is not provided and not found in environment variables.")
         self.load()
 
     def load(self):
