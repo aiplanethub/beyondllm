@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: 'BeyondLLM by AI Planet'
+message: >-
+  If you use this software, please cite it using this
+  metadata.
+type: software
+authors:
+  - given-names: Tarun
+    family-names: Jain
+    email: tarun@aiplanet.com
+  - given-names: Adithya
+    family-names: Hegde
+    email: adithya@aiplanet.com
+  - given-names: Muhammad
+    family-names: Taha
+    email: muhammad@aiplanet.com
+repository-code: 'https://github.com/aiplanethub/beyondllm'
+url: 'https://aiplanet.com/'
+license: Apache-2.0
