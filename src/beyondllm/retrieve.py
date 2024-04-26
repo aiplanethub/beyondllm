@@ -6,7 +6,7 @@ from beyondllm.retrievers.normalRetriever import NormalRetriever
 from beyondllm.retrievers.utils import generate_qa_dataset, evaluate_from_dataset
 import pandas as pd
 
-def auto_retriever(data,embed_model=None,type="normal",top_k=4,**kwargs):
+def auto_retriever(data=None,embed_model=None,type="normal",top_k=4,vectordb=None,**kwargs):
     """
     Automatically selects and initializes a retriever based on the specified type.
     Parameters:
@@ -16,6 +16,7 @@ def auto_retriever(data,embed_model=None,type="normal",top_k=4,**kwargs):
         type (str): The type of retriever to use. Options include 'normal', 'flag-rerank', 
                     'cross-rerank', and 'hybrid'. Defaults to 'normal'.
         top_k (int): The number of top results to retrieve. Defaults to 4.
+        vectordb (VectorDb): The vectordb to use for retrieval
     Additional parameters:
         reranker: Name of the reranking model to be used. To be specified only for type = 'flag-rerank' and 'cross-rerank'
         mode: Possible options are 'AND' or 'OR'. To be specified only for type = 'hybrid. 'AND' mode will retrieve nodes in common between
@@ -27,22 +28,23 @@ def auto_retriever(data,embed_model=None,type="normal",top_k=4,**kwargs):
         
         data = <your dataset here>
         embed_model = <pass your embed model here>
+        vector_store = <pass your vector-store object here>
         
-        retriever = auto_retriever(data=data, embed_model=embed_model, type="normal", top_k=5)
+        retriever = auto_retriever(data=data, embed_model=embed_model, type="normal", top_k=5, vectordb=vector_store)
     """
     if embed_model is None:
         embed_model = GeminiEmbeddings()
     if type == 'normal':
-        retriever = NormalRetriever(data,embed_model,top_k,**kwargs)
+        retriever = NormalRetriever(data,embed_model,top_k,vectordb,**kwargs)
     elif type == 'flag-rerank':
         from .retrievers.flagReranker import FlagEmbeddingRerankRetriever
-        retriever = FlagEmbeddingRerankRetriever(data,embed_model,top_k,**kwargs)
+        retriever = FlagEmbeddingRerankRetriever(data,embed_model,top_k,vectordb,**kwargs)
     elif type == 'cross-rerank':
         from .retrievers.crossEncoderReranker import CrossEncoderRerankRetriever
-        retriever = CrossEncoderRerankRetriever(data,embed_model,top_k,**kwargs)
+        retriever = CrossEncoderRerankRetriever(data,embed_model,top_k,vectordb,**kwargs)
     elif type == 'hybrid':
         from .retrievers.hybridRetriever import HybridRetriever
-        retriever = HybridRetriever(data,embed_model,top_k,**kwargs)
+        retriever = HybridRetriever(data,embed_model,top_k,vectordb,**kwargs)
     else:
         raise NotImplementedError(f"Retriever for the type '{type}' is not implemented.")
 

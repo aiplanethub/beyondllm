@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 
 class EmbeddingConfig(BaseModel):
-    """Base configuration model for all LLMs.
+    """Base configuration model for all Embeddings.
 
-    This class can be extended to include more fields specific to certain LLMs.
+    This class can be extended to include more fields specific to certain Embeddings.
     """
     pass 
 

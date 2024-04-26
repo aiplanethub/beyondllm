@@ -1,5 +1,5 @@
 from beyondllm.retrievers.base import BaseRetriever
-from llama_index.core import VectorStoreIndex, ServiceContext
+from llama_index.core import VectorStoreIndex, ServiceContext,StorageContext
 from llama_index.core.schema import QueryBundle
 import sys
 import subprocess
@@ -45,10 +45,34 @@ class CrossEncoderRerankRetriever(BaseRetriever):
         self.reranker = kwargs.get('reranker',"cross-encoder/ms-marco-MiniLM-L-2-v2")
 
     def load_index(self):
-        service_context = ServiceContext.from_defaults(llm=None, embed_model=self.embed_model)
-        index = VectorStoreIndex(
-            self.data, service_context= service_context,
-        )
+        if self.data is None:
+            index = self.initialize_from_vector_store()
+        else:
+            index = self.initialize_from_data()
+
+        return index
+    
+    def initialize_from_vector_store(self):
+        if self.vectordb is None:
+            raise ValueError("Vector store must be provided if no data is passed")
+        else:
+            index = VectorStoreIndex.from_vector_store(
+                self.vectordb,
+                embed_model=self.embed_model,
+            )
+        return index
+
+
+    def initialize_from_data(self):
+        if self.vectordb==None:
+            index = VectorStoreIndex(
+                self.data, embed_model=self.embed_model
+            )
+        else:
+            storage_context = StorageContext.from_defaults(vector_store=self.vectordb)
+            index = VectorStoreIndex(
+                self.data, storage_context=storage_context, embed_model=self.embed_model
+            )
         return index
     
     def retrieve(self, query):

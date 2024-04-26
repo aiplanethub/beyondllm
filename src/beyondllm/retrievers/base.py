@@ -8,10 +8,12 @@ class BaseRetriever:
         data: The dataset to be indexed or retrieved from.
         embed_model: The embedding model used to generate embeddings for the data.
         top_k: The top k similarity search results to be retrieved
+        vectordb: The vectordb to be used for retrieval
     """
-    def __init__(self, data, embed_model,**kwargs):
+    def __init__(self, data, embed_model, vectordb, **kwargs):
         self.data = data
         self.embed_model = embed_model
+        self.vectordb = vectordb
 
     def load_index(self):
         raise NotImplementedError("This method should be implemented by subclasses.")
