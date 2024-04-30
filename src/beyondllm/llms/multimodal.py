@@ -1,27 +1,28 @@
 from beyondllm.llms.base import BaseLLMModel, ModelConfig
 from typing import Any, Dict, List, Optional
 from dataclasses import dataclass,field
+from PIL import Image
 import os
 
 @dataclass
-class GeminiModel:
+class GeminiMultiModal:
     """
     Class representing a Language Model (LLM) model using Google Generative AI
     Example:
     ```
-    >>> from beyondllm.llms import GeminiModel
-    >>> llm = GeminiModel(model_name="gemini-pro",google_api_key = "<your_api_key>",model_kwargs={"temperature":0.2})
+    >>> from beyondllm.llms import GeminiMultiModal
+    >>> llm = GeminiMultiModal(model_name="gemini-pro-vision",google_api_key = "<your_api_key>",model_kwargs={"temperature":0.2})
     ```
     or 
     ```
     >>> import os
     >>> os.environ['GOOGLE_API_KEY'] = "***********" #replace with your key
-    >>> from beyondllm.llms import GeminiModel
-    >>> llm = GeminiModel(model_name="gemini-pro")
+    >>> from beyondllm.llms import GeminiMultiModal
+    >>> llm = GeminiMultiModal(model_name="gemini-pro-vision")
     ```
     """
     google_api_key:str = ""
-    model_name:str = "gemini-pro"
+    model_name:str = "gemini-pro-vision"
     model_kwargs: dict = field(default_factory=lambda: {
                     "temperature": 0,
                     "top_p": 1,
@@ -43,7 +44,7 @@ class GeminiModel:
             raise ImportError("Google Generative AI library is not installed. Please install it with ``pip install google-generativeai``.")
         
         try:
-            VALID_MODEL_SUPPORT = ["gemini-1.0-pro","gemini-pro",'gemini-1.5-pro-latest']
+            VALID_MODEL_SUPPORT = ["gemini-1.0-pro-vision-latest","gemini-pro-vision"]
             if self.model_name not in VALID_MODEL_SUPPORT:
                 raise f"Model not supported. Currently we only support: {','.join(VALID_MODEL_SUPPORT)}."
             
@@ -54,9 +55,11 @@ class GeminiModel:
         except Exception as e:
             raise Exception("Failed to load the model from Gemini Google Generative AI:", str(e))
 
-
-    def predict(self,prompt:Any):
-        response = self.client.generate_content(prompt)
+    def vision(self,image: Image ,prompt:Optional[str] = None):
+        if prompt:
+            response = self.client.generate_content([prompt,image])
+        else:
+            response = self.client.generate_content(image)
         return response.text
     
     @staticmethod
