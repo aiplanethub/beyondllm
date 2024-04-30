@@ -88,15 +88,39 @@ class HybridRetriever(BaseRetriever):
             raise ValueError("Invalid mode. Mode must be 'AND' or 'OR'.")
 
     def load_index(self):
-        service_context = ServiceContext.from_defaults(llm=None, embed_model=self.embed_model)
-        storage_context = StorageContext.from_defaults()
-        vector_index = VectorStoreIndex(
-            self.data, service_context= service_context, storage_context=storage_context
-        )
-        keyword_index = SimpleKeywordTableIndex(
-            self.data,service_context=service_context,storage_context=storage_context
-        )
+        if self.data is None:
+            raise ValueError("Data needs to be passed for keyword retrieval.")
+        else:
+            vector_index, keyword_index = self.initialize_from_data()
+
         return vector_index, keyword_index
+
+    def initialize_from_data(self):
+        if self.vectordb==None:
+            vector_index = VectorStoreIndex(
+                self.data, embed_model=self.embed_model
+            )
+            keyword_index = SimpleKeywordTableIndex(
+                self.data, service_context=ServiceContext.from_defaults(llm=None,embed_model=None)
+            )
+        else:
+            storage_context = StorageContext.from_defaults(vector_store=self.vectordb)
+            vector_index = VectorStoreIndex(
+                self.data, storage_context=storage_context, embed_model=self.embed_model
+            )
+            keyword_index = SimpleKeywordTableIndex(
+                self.data, service_context=ServiceContext.from_defaults(llm=None,embed_model=None)
+            )
+        return vector_index, keyword_index
+    
+    # def load_index(self):
+    #     vector_index = VectorStoreIndex(
+    #         self.data, embed_model=self.embed_model
+    #     )
+    #     keyword_index = SimpleKeywordTableIndex(
+    #         self.data, service_context=ServiceContext.from_defaults(llm=None,embed_model=None)
+    #     )
+    #     return vector_index, keyword_index
     
     def as_retriever(self):
         vector_index, keyword_index = self.load_index()
