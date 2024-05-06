@@ -3,16 +3,6 @@ from dataclasses import dataclass, field
 import warnings
 warnings.filterwarnings("ignore")
 import subprocess,sys
-try:
-    from llama_index.vector_stores.chroma import ChromaVectorStore
-except ImportError:
-    user_agree = input("The feature you're trying to use requires an additional library(s):llama_index.vector_stores.chroma. Would you like to install it now? [y/N]: ")
-    if user_agree.lower() == 'y':
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "llama_index.vector_stores.chroma"])
-        from llama_index.vector_stores.chroma import ChromaVectorStore
-    else:
-        raise ImportError("The required 'llama_index.vector_stores.chroma' is not installed.")
-import chromadb
 
 @dataclass
 class ChromaVectorDb:
@@ -24,6 +14,17 @@ class ChromaVectorDb:
     persist_directory: str = ""
 
     def __post_init__(self):
+        try:
+            from llama_index.vector_stores.chroma import ChromaVectorStore
+        except ImportError:
+            user_agree = input("The feature you're trying to use requires an additional library(s):llama_index.vector_stores.chroma. Would you like to install it now? [y/N]: ")
+            if user_agree.lower() == 'y':
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "llama_index.vector_stores.chroma"])
+                from llama_index.vector_stores.chroma import ChromaVectorStore
+            else:
+                raise ImportError("The required 'llama_index.vector_stores.chroma' is not installed.")
+        import chromadb
+        
         if self.persist_directory=="" or self.persist_directory==None:  
             self.chroma_client = chromadb.EphemeralClient()
         else:
