@@ -113,15 +113,6 @@ class HybridRetriever(BaseRetriever):
             )
         return vector_index, keyword_index
     
-    # def load_index(self):
-    #     vector_index = VectorStoreIndex(
-    #         self.data, embed_model=self.embed_model
-    #     )
-    #     keyword_index = SimpleKeywordTableIndex(
-    #         self.data, service_context=ServiceContext.from_defaults(llm=None,embed_model=None)
-    #     )
-    #     return vector_index, keyword_index
-    
     def as_retriever(self):
         vector_index, keyword_index = self.load_index()
 
