@@ -23,6 +23,74 @@ BeyondLLM currently integrates with Chroma, a powerful and purpose-built vector 
 vectordb = ChromaVectorDb(collection_name="my_persistent_collection", persist_directory="./db/chroma/")
 </code></pre>
 
+### 2. Pinecone
+
+Pinecone is a fully managed vector database service designed to provide high performance and scalability for similarity search applications. It offers a robust and user-friendly platform for storing, indexing, and querying vector embeddings, making it an excellent choice for BeyondLLM's Retrieval Augmented Generation (RAG) capabilities.
+
+**Parameters:**
+
+* `api_key` (required): Your Pinecone API key for accessing the service.
+* `index_name` (required): The name of the index within Pinecone where your embeddings will be stored.
+* `create` (optional): Set to True to create a new index if it doesn't exist. Defaults to False, assuming the index already exists.
+* `embedding_dim` (required if create=True): The dimensionality of the embedding vectors. This is essential when creating a new index. 768 is the dimension of our default embeddings. (1536 is the size of OpenAI's Default embeddings)
+* `metric` (required if create=True): The distance metric used for similarity search. Common options include "cosine" and "euclidean".
+* `spec` (optional): The deployment specification. Options are "serverless" (default) or "pod-based".
+* `cloud (`required for serverless`):` The cloud provider for your serverless Pinecone index.
+* `region` (required for serverless): The region for your serverless Pinecone index.
+* `pod_type`  (required for pod-based): The pod type for your dedicated Pinecone index.
+* `replicas` (required for pod-based): The number of replicas for your dedicated Pinecone index.
+
+**Code Example:**
+
+To simply use an existing Pinecone index, all you need to specify is the `api_key` and the `index_name` parameters. You can pass your data which will be converted into vectors based on your embedding model and these vectors will be upserted in BeyondLLM's `auto_retriever` method.
+
+As mentioned in the parameters, setting the `create` parameter as True allows you to create a new index that doesn't exist, this can be done by setting the spec based on your index type as shown below:
+
+```python
+from beyondllm.vectordb import PineconeVectorDb
+
+# Connect to existing Pinecone index
+vectordb_existing = PineconeVectorDb(api_key="your_api_key", index_name="your_index_name")
+
+# Create a new serverless Pinecone index
+vectordb_new_serverless = PineconeVectorDb(
+    create=True,
+    api_key="your_api_key",
+    index_name="your_new_index_name",
+    embedding_dim=768,
+    metric="cosine",
+    cloud="aws",
+    region="us-east-1",
+)
+
+# Create a new pod-based Pinecone index: NOT AVAILABLE IN FREE TIER
+vectordb_new_pod = PineconeVectorDb(
+    create=True,
+    api_key="your_api_key",
+    index_name="your_new_index_name",
+    embedding_dim=768,
+    metric="cosine",
+    spec="pod-based",
+    pod_type="p1",
+    replicas=1,
+)
+```
+
+**Integrating with BeyondLLM Retrievers:**
+
+VectorDB instances can be used with the auto\_retriever functionality provided by BeyondLLM, by simply passing instance within the auto\_retriever function to enable efficient retrieval from your Vector Store index:
+
+```python
+from beyondllm.retrieve import auto_retriever
+
+# Initialize your vector store
+vector_store = <your-vector-store-instance-here>
+retriever = auto_retriever(data=data, embed_model=embed_model, type="normal", top_k=5, vectordb=vector_store)
+
+# Perform retrieval operations
+results = retriever.retrieve(query="your_user_query")
+```
+
 ## Choosing the Right Vector Database
 
 The selection of the most suitable vector database depends on several factors:
