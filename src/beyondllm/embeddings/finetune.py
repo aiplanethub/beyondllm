@@ -4,34 +4,14 @@ from llama_index.core.evaluation import EmbeddingQAFinetuneDataset
 from llama_index.core import  SimpleDirectoryReader
 from dataclasses import dataclass, field
 
-try:
-    from llama_index.finetuning import SentenceTransformersFinetuneEngine
-except ImportError:
-    user_agree = input("The feature you're trying to use require additional packages. Would you like to install it now? [y/N]: ")
-    if user_agree.lower() == 'y':
-        import subprocess
-        import sys
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-finetuning"])
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-embeddings-huggingface"])
-        
-        from llama_index.finetuning import SentenceTransformersFinetuneEngine
-    else:
-        raise ImportError("The required 'llama-index-finetuning' package is not installed.")
-    
-
-
-
-
 @dataclass
 class FineTuneEmbeddings:
     output_path: str = None
     docs: list = field(init=False, default_factory=list)
 
     def load_data(self, files):
-        print(f"Loading files {files}")
         reader = SimpleDirectoryReader(input_files=files)
         docs = reader.load_data()
-        print(f'Loaded {len(docs)} docs')
         return docs
 
     def load_corpus(self, docs, for_training=False, verbose=False):
@@ -59,6 +39,20 @@ class FineTuneEmbeddings:
         return "train_dataset.json", "val_dataset.json"
 
     def finetune_model(self, train_file, val_file, model_name):
+        try:
+            from llama_index.finetuning import SentenceTransformersFinetuneEngine
+        except ImportError:
+            user_agree = input("The feature you're trying to use require additional packages. Would you like to install it now? [y/N]: ")
+            if user_agree.lower() == 'y':
+                import subprocess
+                import sys
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-finetuning"])
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-embeddings-huggingface"])
+                
+                from llama_index.finetuning import SentenceTransformersFinetuneEngine
+            else:
+                raise ImportError("The required 'llama-index-finetuning' package is not installed.")
+    
         train_dataset = EmbeddingQAFinetuneDataset.from_json(train_file)
         val_dataset = EmbeddingQAFinetuneDataset.from_json(val_file)
         model_output_path = self.output_path or "finetuned_embedding_model"
@@ -81,6 +75,3 @@ class FineTuneEmbeddings:
 
     def load_model(self, model_path):
         return resolve_embed_model("local:" + model_path)
-
-
-        
