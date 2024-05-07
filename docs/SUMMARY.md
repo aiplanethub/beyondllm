@@ -21,6 +21,7 @@
 
 * [📚 Re-ranker Retrievers](advanced-rag/re-ranker-retrievers.md)
 * [🔀 Hybrid Retrievers](advanced-rag/hybrid-retrievers.md)
+* [🥶 Finetune Embeddings](advanced-rag/finetune-embeddings.md)
 
 ## Use Cases
 
