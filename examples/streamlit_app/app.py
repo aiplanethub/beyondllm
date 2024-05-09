@@ -30,6 +30,25 @@ with st.sidebar:
         pinecone_option = st.radio("Choose Option", 
                                    ('Existing', 'Create New'), 
                                    index=0)
+        
+        # choose whether you want to use the default embedding dimension or specify your own
+        pinecone_embedding_dim = st.number_input("Embedding Dimension", 
+                                                min_value=1, 
+                                                max_value=2048, 
+                                                value=768)
+        
+        # choose whether you want to use the default metric or specify your own, choose between "cosine" and "euclidean"
+        pinecone_metric = st.selectbox("Metric", 
+                                      ["cosine", "euclidean"], 
+                                      index=0)
+        
+        # choose whether you want to use the default cloud or specify your own
+        pinecone_cloud = st.selectbox("Cloud",
+                                      ["aws", "gcp", "azure"], 
+                                      index=0)
+        
+        # put the name of the region you want to use
+        pinecone_region = st.text_input("Region:")
 
 if google_api_key:
     st.success("Google API Key entered successfully!")
@@ -46,7 +65,11 @@ if google_api_key:
                                       vector_db=vectordb_type.lower(), 
                                       pinecone_api_key=pinecone_api_key, 
                                       pinecone_index_name=pinecone_index_name, 
-                                      pinecone_option=pinecone_option)
+                                      pinecone_option=pinecone_option,
+                                      pinecone_embedding_dim=pinecone_embedding_dim,
+                                      pinecone_metric=pinecone_metric,
+                                      pinecone_cloud=pinecone_cloud,
+                                      pinecone_region=pinecone_region)
         elif vectordb_type == 'Chroma':
             retriever = get_retriever(uploaded_file, 
                                       google_api_key, 

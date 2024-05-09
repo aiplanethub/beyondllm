@@ -4,7 +4,7 @@ from beyondllm.vectordb import ChromaVectorDb, PineconeVectorDb
 from beyondllm.embeddings import GeminiEmbeddings
 from beyondllm import source
 
-def get_retriever(uploaded_file, google_api_key, vector_db='chroma', pinecone_api_key=None, pinecone_index_name=None, pinecone_option=None):
+def get_retriever(uploaded_file, google_api_key, vector_db='chroma', pinecone_api_key=None, pinecone_index_name=None, pinecone_option=None, pinecone_embedding_dim=None, pinecone_metric=None, pinecone_cloud=None, pinecone_region=None):
     if google_api_key:
         # Save the uploaded file
         save_path = "./uploaded_files" # change this to your desired path or leave it as is
@@ -36,10 +36,10 @@ def get_retriever(uploaded_file, google_api_key, vector_db='chroma', pinecone_ap
                     create=True,
                     api_key=pinecone_api_key,
                     index_name=pinecone_index_name,
-                    embedding_dim=768,
-                    metric="cosine",
-                    cloud="aws",
-                    region="us-east-1",
+                    embedding_dim=pinecone_embedding_dim,
+                    metric=pinecone_metric,
+                    cloud=pinecone_cloud,
+                    region=pinecone_region,
                 )
         # Initialize the retriever
         retriever = auto_retriever(data=data, embed_model=embed_model, type="normal", top_k=5, vectordb=vector_store)
