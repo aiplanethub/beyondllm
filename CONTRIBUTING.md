@@ -5,7 +5,7 @@ helps, and credit will always be given.
 
 ## Get Started!
 
-Ready to contribute? Here's how to set up `genai_stack` for local development.
+Ready to contribute? Here's how to set up `beyondllm` for local development.
 
 1. Fork the `beyondllm` repo on GitHub.
 2. Clone your fork locally
@@ -71,8 +71,8 @@ and "help wanted" is open to whoever wants to implement it.
 
 **Write Documentation**
 
-GenAI Stack could always use more documentation, whether as part of the
-official GenAI Stack docs, in docstrings, or even on the web in blog posts,
+BeyondLLM could always use more documentation, whether as part of the
+official BeyondLLM docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 **Submit Feedback**
