@@ -50,62 +50,62 @@ def auto_retriever(data=None,embed_model=None,type="normal",top_k=4,vectordb=Non
 
     return retriever
 
-# def compare_retrievers(data,llm, retrievers_list):
-#     """
-#     Compares multiple retrievers on a QA dataset, evaluating their hit rate and MRR.
+def compare_retrievers(data,llm, retrievers_list):
+    """
+    Compares multiple retrievers on a QA dataset, evaluating their hit rate and MRR.
 
-#     Parameters:
-#         data (List[TextNode]): The list of TextNodes to generate the QA dataset from.
-#         llm (BaseLLMModel): The language model used to generate the QA dataset.
-#         retrievers_list (List[BaseRetriever]): A list of retriever instances to evaluate.
+    Parameters:
+        data (List[TextNode]): The list of TextNodes to generate the QA dataset from.
+        llm (BaseLLMModel): The language model used to generate the QA dataset.
+        retrievers_list (List[BaseRetriever]): A list of retriever instances to evaluate.
 
-#     Returns:
-#         pandas.DataFrame: A DataFrame containing the hit rate and MRR for each retriever.
-#     """
-#     qa_dataset = generate_qa_dataset(llm, data)
+    Returns:
+        pandas.DataFrame: A DataFrame containing the hit rate and MRR for each retriever.
+    """
+    qa_dataset = generate_qa_dataset(llm, data)
     
-#     results = []
+    results = []
 
-#     for retriever in retrievers_list:
-#         hit_rate, mrr = evaluate_from_dataset(qa_dataset, retriever)
+    for retriever in retrievers_list:
+        hit_rate, mrr = evaluate_from_dataset(qa_dataset, retriever)
         
-#         results.append({
-#             "Retriever": type(retriever).__name__,
-#             "Hit Rate": hit_rate,
-#             "MRR": mrr
-#         })
+        results.append({
+            "Retriever": type(retriever).__name__,
+            "Hit Rate": hit_rate,
+            "MRR": mrr
+        })
 
-#     results_df = pd.DataFrame(results)
+    results_df = pd.DataFrame(results)
 
-#     return results_df
+    return results_df
 
 
-# def compare_embeddings(data,embed_model_list,llm,**kwargs):
-#     """
-#     Compares multiple embedding models using same retriever on a QA dataset, evaluating their hit rate and MRR.
+def compare_embeddings(data,embed_model_list,llm,**kwargs):
+    """
+    Compares multiple embedding models using same retriever on a QA dataset, evaluating their hit rate and MRR.
 
-#     Parameters:
-#         data (List[TextNode]): The list of TextNodes to generate the QA dataset from.
-#         llm (BaseLLMModel): The language model used to generate the QA dataset.
-#         retrievers_list (List[BaseEmbeddings]): A list of retriever instances to evaluate.
+    Parameters:
+        data (List[TextNode]): The list of TextNodes to generate the QA dataset from.
+        llm (BaseLLMModel): The language model used to generate the QA dataset.
+        retrievers_list (List[BaseEmbeddings]): A list of retriever instances to evaluate.
 
-#     Returns:
-#         pandas.DataFrame: A DataFrame containing the hit rate and MRR for each retriever.
-#     """
-#     qa_dataset = generate_qa_dataset(llm, data)
+    Returns:
+        pandas.DataFrame: A DataFrame containing the hit rate and MRR for each retriever.
+    """
+    qa_dataset = generate_qa_dataset(llm, data)
     
-#     results = []
+    results = []
 
-#     for embed_model in embed_model_list:
-#         retriever = NormalRetriever(data,embed_model,**kwargs)
-#         hit_rate, mrr = evaluate_from_dataset(qa_dataset, retriever)
+    for embed_model in embed_model_list:
+        retriever = NormalRetriever(data,embed_model,**kwargs)
+        hit_rate, mrr = evaluate_from_dataset(qa_dataset, retriever)
         
-#         results.append({
-#             "Embeddings model": type(embed_model).__name__,
-#             "Hit Rate": hit_rate,
-#             "MRR": mrr
-#         })
+        results.append({
+            "Embeddings model": type(embed_model).__name__,
+            "Hit Rate": hit_rate,
+            "MRR": mrr
+        })
 
-#     results_df = pd.DataFrame(results)
+    results_df = pd.DataFrame(results)
 
-#     return results_df
+    return results_df

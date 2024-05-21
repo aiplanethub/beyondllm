@@ -2,6 +2,7 @@ from beyondllm.loaders.base import BaseLoader
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core.node_parser import SentenceSplitter
 from dataclasses import dataclass
+import os
 
 @dataclass
 class SimpleLoader(BaseLoader):
@@ -16,7 +17,18 @@ class SimpleLoader(BaseLoader):
 
     def load(self, path):
         """Load data from a file."""
-        docs = SimpleDirectoryReader(input_files=[path]).load_data()
+        input_files = []
+
+        if isinstance(path, str):
+            if os.path.isdir(path):
+                docs = SimpleDirectoryReader(path).load_data()
+            else:
+                input_files.append(path)
+                docs = SimpleDirectoryReader(input_files=input_files).load_data()
+        elif isinstance(path, list):
+            input_files.extend(path)
+            docs = SimpleDirectoryReader(input_files=input_files).load_data()
+
         return docs
 
     def split(self, documents):
