@@ -23,11 +23,18 @@ class YoutubeLoader(BaseLoader):
     chunk_overlap: int = 150
 
     def load(self, path):
-        """Load youtube video transcript data from the URL of the video."""
+        """Load YouTube video transcript data from a single URL or a list of URLs."""
+        ytlinks = []
+
+        if isinstance(path, str):
+            ytlinks.append(path)
+        elif isinstance(path, list):
+            ytlinks.extend(path)
+
+        print(ytlinks)
+
         loader = YoutubeTranscriptReader()
-        docs = loader.load_data(
-            ytlinks=[path]
-        )
+        docs = loader.load_data(ytlinks=ytlinks)
         return docs
 
     def split(self, documents):

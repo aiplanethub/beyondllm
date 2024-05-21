@@ -5,7 +5,7 @@ def fit(path,dtype,**kwargs):
     Fits the data from the given path using the appropriate loader based on the specified loader type.
     
     Parameters:
-        path (str): The path to the data to be loaded.
+        input (str or list): The input path(s) or URL(s) to the data to be loaded.
         dtype (str): Specifies the type of loader to use based on the file type or source.
         **kwargs: Additional keyword arguments to be passed to the selected loader.
     
@@ -22,7 +22,7 @@ def fit(path,dtype,**kwargs):
 
     simple_loader_file_types = [
         "pdf", "csv", "docx", "epub", "hwp",
-        "mbox", "md", "ppt", "pptx", "pptm"
+        "mbox", "md", "ppt", "pptx", "pptm", ".txt"
     ]
     
     if dtype in simple_loader_file_types and dtype!='llama-parse':

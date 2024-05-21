@@ -20,13 +20,15 @@ class UrlLoader(BaseLoader):
     chunk_overlap: int = 150
 
     def load(self, path):
-        """
-        Load web page data from a file. 
-        Requires a url to be passed to read the HTML data of the page.
-        """
-        docs = SimpleWebPageReader(html_to_text=True).load_data(
-            [path]
-        )
+        """Load data from a single URL or a list of URLs."""
+        urls = []
+
+        if isinstance(path, str):
+            urls.append(path)
+        elif isinstance(path, list):
+            urls.extend(path)
+
+        docs = SimpleWebPageReader(urls=urls).load_data()
         return docs
 
     def split(self, documents):

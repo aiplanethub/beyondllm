@@ -23,12 +23,17 @@ class NotionLoader(BaseLoader):
     chunk_overlap: int = 100
 
     def load(self, path):
-        """Load Notion page data from the page ID of your Notion page: The hash value at the end of your URL"""
+        """Load Notion page data from the page ID of your Notion page or a list of page IDs."""
         integration_token = self.notion_integration_token or os.getenv('NOTION_INTEGRATION_TOKEN')
+        page_ids = []
+
+        if isinstance(path, str):
+            page_ids.append(path)
+        elif isinstance(input, list):
+            page_ids.extend(path)
+
         loader = NotionPageReader(integration_token=integration_token)
-        docs = loader.load_data(
-            page_ids=[path]
-        )
+        docs = loader.load_data(page_ids=page_ids)
         return docs
 
     def split(self, documents):

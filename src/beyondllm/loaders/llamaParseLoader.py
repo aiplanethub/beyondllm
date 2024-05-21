@@ -12,12 +12,26 @@ class LlamaParseLoader(BaseLoader):
     chunk_overlap: int = 100
     
     def load(self, path):
-        """Load data from a file to be parsed by LlamaParse cloud API."""
+        """Load data from a file, list of files, or directory to be parsed by LlamaParse cloud API."""
         llama_parse_key = self.llama_parse_key or os.getenv('LLAMA_CLOUD_API_KEY')
+        input_files = []
+
+        if isinstance(path, str):
+            if os.path.isdir(path):
+                for root, _, files in os.walk(path):
+                    for file in files:
+                        input_files.append(os.path.join(root, file))
+            else:
+                input_files.append(path)
+        elif isinstance(path, list):
+            input_files.extend(input)
+
         try:
-            docs = LlamaParse(result_type="markdown",api_key=llama_parse_key).load_data(path)
-        except:
-            raise ValueError("File not compatible/no result returned from Llamaparse")
+            docs = []
+            for file in input_files:
+                docs.extend(LlamaParse(result_type="markdown", api_key=llama_parse_key).load_data(file))
+        except Exception as e:
+            raise ValueError(f"File not compatible/no result returned from Llamaparse: {e}")
         return docs
 
     def split(self, documents):
