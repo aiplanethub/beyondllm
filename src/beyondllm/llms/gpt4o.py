@@ -6,9 +6,9 @@ import base64
 import subprocess, sys
 
 @dataclass
-class GPT4OpenAIModel:
+class GPT4oOpenAIModel:
     """
-    Class representing a Chat Language Model (LLM) model using OpenAI GPT-4 with Vision capabilities
+    Class representing a Chat Language Model (LLM) model using OpenAI GPT-4o with Vision capabilities
     Example:
     from beyondllm.llms import GPT4OpenAIModel
     llm = GPT4OpenAIModel(model="gpt-4o", api_key = "", model_kwargs = {"max_tokens":512,"temperature":0.1})
