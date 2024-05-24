@@ -29,7 +29,7 @@ class NotionLoader(BaseLoader):
 
         if isinstance(path, str):
             page_ids.append(path)
-        elif isinstance(input, list):
+        elif isinstance(path, list):
             page_ids.extend(path)
 
         loader = NotionPageReader(integration_token=integration_token)
