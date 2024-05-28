@@ -8,7 +8,9 @@ The beyondllm`.source`module provides a variety of loaders to ingest and process
 
 ## fit Function
 
-The central function for loading data is fit. It offers a unified interface for loading and processing data regardless of the source type.
+The central function for loading data is fit. It offers a unified interface for loading and processing data regardless of the source type. Whether you have local files, web pages, YouTube videos, or want to leverage the power of LlamaParse, fit simplifies the process, handling multiple input types with ease.
+
+**Centralized Data Loading:**
 
 ```python
 from beyondllm.source import fit
@@ -18,30 +20,51 @@ data = fit(path="<your-doc-path-here>", dtype="<your-dtype>", chunk_size=512, ch
 
 **Parameters:**
 
-* **path (str):** The path to the data source. This can be a local file path, a URL, or a YouTube video ID, depending on the chosen loader type.
-* **dtype (str):** Specifies the type of loader to use based on the data source format or origin. Supported options include:
+* **path** (str or list): The path to your data source(s).
+  * For single inputs: A string representing a local file path, a URL, or a YouTube video ID.
+  * For multiple inputs: A list of strings, where each string is a file path, URL, or YouTube video ID.
+* **dtype** (str): Specifies the type of loader to use, based on your data format. Supported options include:
   * **File Types:** "pdf", "csv", "docx", "epub", "md", "ppt", "pptx", "pptm" (using SimpleLoader)
   * **Web Pages:** "url" (using UrlLoader)
   * **YouTube Videos:** "youtube" (using YoutubeLoader)
   * **LlamaParse Cloud API:** "llama-parse" (using LlamaParseLoader)
-* **chunk\_size (int):** The desired size of each text chunk after splitting the document. Default is 512 characters.
-* **chunk\_overlap (int):** The amount of overlap between consecutive chunks. This helps maintain context and coherence. Default is 100 characters.
+* **chunk\_size** (int): The desired length (in characters) for splitting text into chunks. Defaults to 512.
+* **chunk\_overlap** (int): The number of overlapping characters between consecutive chunks to preserve context. Defaults to 100.
 
 **Returns:**
 
-* **List\[TextNode]:** A list of TextNode objects representing the processed data, ready for further use in the RAG pipeline.
+* List\[TextNode]: A list of TextNode objects representing your processed data, ready for use in the RAG pipeline.
 
-## Available Loaders
+**Available Loaders:**
 
-All of the below loaders are offered using the `fit` function itself.&#x20;
+BeyondLLM provides a range of specialized loaders to handle different data types. All loaders are accessible through the fit function by simply changing the dtype parameter.
 
-**NOTE:** The `dtype` parameter is the only value to be changed based on your input type and the `fit` function will do the job for you!&#x20;
+### **1. SimpleLoader:**
 
-The default chunk\_size is 512 and the default chunk\_overlap is 100.
+Handles common file types like PDFs, Word documents, presentations, and Markdown files. Supports chunk\_size and chunk\_overlap parameters for text splitting. This currently supports the following file formats: "pdf", "csv", "docx", "epub", "md", "ppt", "pptx", "pptm", "txt".&#x20;
 
-### **SimpleLoader**
+* **File Types Supported:** "pdf", "csv", "docx", "epub", "md", "ppt", "pptx", "pptm", "txt"
+* **Multiple Inputs:** Accepts a list of file paths.
+* **Directory Loading:** When providing a directory path as path, the SimpleLoader will automatically load all supported file types within that directory.
 
-Handles common file types like PDFs, Word documents, presentations, and Markdown files. Supports chunk\_size and chunk\_overlap parameters for text splitting. This currently supports the following file formats: "pdf", "csv", "docx", "epub", "md", "ppt", "pptx", "pptm". However, the below command needs to be run to install the required library to parse .docx files:
+**Code Snippet (Loading Multiple PDFs):**
+
+```python
+from beyondllm.source import fit
+
+pdf_paths = ["path/to/document1.pdf", "path/to/document2.pdf", "path/to/document3.pdf"]
+data = fit(path=pdf_paths, dtype="pdf")
+```
+
+or to load one file, it can just be passed as a path:
+
+```python
+from beyondllm.source import fit
+
+data = fit(path="path/to/document1.pdf", dtype="pdf")
+```
+
+Some file types require some additional libraries. Install the required library to parse .docx files:
 
 ```bash
 pip install docx2text
@@ -53,47 +76,53 @@ For .ppt files:
 pip install torch transformers python-pptx Pillow
 ```
 
-Code snippet: Loading a PDF document:
+To load multiple documents, a path to a directory can also be passed.
 
 ```python
 from beyondllm.source import fit
 
-data = fit(path="path/to/document.pdf", dtype="pdf", chunk_size=1024, chunk_overlap=50)
+data = fit(path="path/to/directory/", dtype="pdf")
 ```
 
-### **UrlLoader**
+### **2. UrlLoader:**
 
-Extracts text content from web pages based on the provided URL. Supports chunk\_size and chunk\_overlap parameters. This requires an additional library which can be installed by running:
+&#x20;Extracts text content from web pages given a URL or a list of URLs. Supports chunk\_size and chunk\_overlap parameters. This requires an additional library which can be installed by running:
 
 ```bash
 pip install llama-index-readers-web
 ```
 
-Code snippet: Loading HTML data from a website using the URL:
+* **Multiple Inputs:** Accepts a list of URLs.
+
+**Code Snippet (Loading Multiple Web Pages):**
 
 ```python
 from beyondllm.source import fit
 
-data = fit(path="url-link-of-your-website.com", dtype="url")
+urls = ["https://www.example.com", "https://www.anotherwebsite.org"]
+data = fit(path=urls, dtype="url")
 ```
 
-### **YoutubeLoader**
+### **3. YoutubeLoader:**
 
-Downloads and processes transcripts from YouTube videos. Supports chunk\_size and chunk\_overlap parameters.
+Downloads and processes transcripts from YouTube videos. requires the following additional libraries:
 
 ```bash
-pip install llama-index-readers-youtube-transcript youtube-transcript-api
+pip install llama-index-readers-web
 ```
 
-Code snippet: Loading a youtube video transcript:
+* **Multiple Inputs:** Accepts a list of YouTube video URLs.
+
+**Code Snippet (Loading Transcripts from Multiple Videos):**
 
 ```python
 from beyondllm.source import fit
 
-data = fit(path="youtube-video-url", dtype="youtube")
+youtube_urls = ["https://www.youtube.com/watch?v=video_id_1", "https://www.youtube.com/watch?v=video_id_2"]
+data = fit(path=youtube_urls, dtype="youtube")
 ```
 
-### **LlamaParseLoader**
+### **4. LlamaParseLoader:**
 
 Leverages the LlamaParse Cloud API to extract structured information and text from various documents. Requires an additional llama\_parse\_key parameter or `LLAMA_CLOUD_API_KEY` environment variable to be set. Supports chunk\_size and chunk\_overlap parameters. We internally perform a markdown splitting on your data.
 
@@ -101,23 +130,24 @@ Leverages the LlamaParse Cloud API to extract structured information and text fr
 pip install llama-parse
 ```
 
-**NOTE**: Currently only supports .pdf files, and requires a Llama Parse API key, you can obtain one from [https://cloud.llamaindex.ai/login](https://cloud.llamaindex.ai/login).
+* **File Types Supported (Currently):** "pdf"
+* **Requires:** llama\_parse\_key parameter or LLAMA\_CLOUD\_API\_KEY environment variable (obtain an API key from [https://cloud.llamaindex.ai/login](https://cloud.llamaindex.ai/login)).
+* **Multiple Inputs:** Accepts a list of PDF file paths.
 
-Code snippet: Loading a PDF document:
+**Code Snippet (Loading Multiple PDFs with LlamaParse):**
 
 ```python
 from beyondllm.source import fit
 
-data = fit(path="path/to/document.pdf", dtype="llama-parse", llama_parse_key="llx-",)
+pdf_paths = ["path/to/document1.pdf", "path/to/document2.pdf"]
+data = fit(path=pdf_paths, dtype="llama-parse", llama_parse_key="your_llama_parse_api_key")
 ```
 
-**NOTE:** If llama-parse loader is to be used in a Google Colab notebook, run the below lines of code before using fit with dtype="llama-parse"
+*   For LlamaParseLoader in Google Colab, run these lines before using fit:
 
-```python
-import nest_asyncio
-nest_asyncio.apply()
-
-data = fit(path="path/to/document.pdf", dtype="llama-parse", llama_parse_key="llx-",)
-```
+    ```python
+    import nest_asyncio
+    nest_asyncio.apply()
+    ```
 
 **By leveraging the diverse range of loaders in BeyondLLM, you can effectively incorporate information from various sources into your RAG pipeline for enhanced question answering and knowledge retrieval capabilities.**

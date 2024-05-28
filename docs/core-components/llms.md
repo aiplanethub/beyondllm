@@ -25,6 +25,57 @@ llm = GeminiModel(model_name="gemini-pro",google_api_key = "<your_api_key>")
 
 Import the GeminiModel from the llms and configure it according to your needs and start using it.
 
+### GPT-4o Multimodal Model
+
+This LLM, GPT4OpenAIModel, harnesses the power of OpenAI's GPT-4o model with vision capabilities, enabling interactions that go beyond simple text. It seamlessly handles image, audio, and video inputs alongside text prompts, opening up a realm of multimodal possibilities within your BeyondLLM applications.
+
+In order to harness the multi-modal capabilities of this model, make sure to install the below libraries:
+
+```bash
+pip install opencv-python moviepy
+```
+
+**Parameters:**
+
+* **api\_key** (required): Your OpenAI API key. You can find this key on your OpenAI account page.
+* **model** (optional): Specifies the GPT-4 model to use. The default is "gpt-4o," which is GPT-4 with vision capabilities.
+* **model\_kwargs** (optional): A dictionary of additional keyword arguments to pass to the OpenAI API call, such as max\_tokens (to control response length) or temperature (to influence the randomness of the output).
+* **media\_paths** (optional): The path or a list of paths to your multimedia files (images, audio, or video). You can pass either a single string representing a file path or a list of strings for multiple files. Supported formats include:
+  * **Images:** JPG, PNG
+  * **Audio:** MP3, WAV
+  * **Video:** MP4, AVI, WEBM
+
+**Code Snippet:**
+
+```python
+from beyondllm.llms import GPT4OpenAIModel
+
+# Initialize the GPT4OpenAIModel with your API key
+llm = GPT4OpenAIModel(api_key="your_openai_api_key")
+```
+
+**Example Usages:**
+
+**1. Using a Single Image:**
+
+```python
+image_path = "path/to/your/image.jpg"
+response = llm.predict("What can you tell me about this image?", media_paths=image_path)
+print(response)
+```
+
+**2. Using Multiple Media Files:**
+
+```python
+media_paths = ["path/to/image.png", "path/to/audio.mp3", "path/to/video.mp4"]
+response = llm.predict("Summarize the content of these files", media_paths=media_paths)
+print(response)
+```
+
+**NOTE**: Whisper will be used for Audio to Text transcription
+
+BeyondLLM allows you to easily incorporate GPT-4's multimodal abilities into your projects without having to manage the complexities of media encoding and transcription
+
 ### ChatOpenAIModel
 
 ChatOpenAI is a chat model provided by OpenAI which is trained on instructions dataset in a large corpus.&#x20;
@@ -33,7 +84,7 @@ ChatOpenAI is a chat model provided by OpenAI which is trained on instructions d
 
 In order to use ChatOpenAIModel, we first need to install it:
 
-```
+```bash
 pip install openai
 ```
 
@@ -62,7 +113,7 @@ The Hugging Face Hub is a platform with over 350k models, 75k datasets, and 150k
 
 In order to use HuggingFaceModel, we first need to install it:
 
-```
+```bash
 pip install huggingface_hub
 ```
 
@@ -100,7 +151,7 @@ More commands: [https://github.com/ollama/ollama](https://github.com/ollama/olla
 
 **Installation**
 
-```
+```bash
 pip install ollama
 ```
 
@@ -126,7 +177,7 @@ Azure OpenAI Service provides REST API access to OpenAI’s powerful language mo
 
 In order to use AzureOpenAIModel, we first need to install it:
 
-```
+```bash
 pip install openai
 ```
 
