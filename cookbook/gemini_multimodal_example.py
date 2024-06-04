@@ -28,4 +28,4 @@ img = Image.open("./sample.jpg")
 """
 
 llm = GeminiMultiModal()
-print(llm.vision(prompt="name the wife of the person?",image=img))
+print(llm.predict(prompt="name the wife of the person?",image=img))
