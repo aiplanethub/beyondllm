@@ -55,7 +55,7 @@ class GeminiMultiModal:
         except Exception as e:
             raise Exception("Failed to load the model from Gemini Google Generative AI:", str(e))
 
-    def vision(self,image: Image ,prompt:Optional[str] = None):
+    def predict(self,image: Image ,prompt:Optional[str] = None):
         if prompt:
             response = self.client.generate_content([prompt,image])
         else:
