@@ -21,6 +21,7 @@ _Notes: Currently we only support **gemini-pro** and **gemini-1.0-pro. Also no n
 from beyondllm.llms import GeminiModel
 
 llm = GeminiModel(model_name="gemini-pro",google_api_key = "<your_api_key>")
+print(llm.predict("<your-query>"))
 ```
 
 Import the GeminiModel from the llms and configure it according to your needs and start using it.
@@ -48,10 +49,10 @@ pip install opencv-python moviepy
 **Code Snippet:**
 
 ```python
-from beyondllm.llms import GPT4OpenAIModel
+from beyondllm.llms import GPT4oOpenAIModel
 
 # Initialize the GPT4OpenAIModel with your API key
-llm = GPT4OpenAIModel(api_key="your_openai_api_key")
+llm = GPT4oOpenAIModel(api_key="your_openai_api_key")
 ```
 
 **Example Usages:**
