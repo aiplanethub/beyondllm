@@ -1,4 +1,4 @@
-# 🥶 Finetune Embeddings
+# 📐 Finetune Embeddings
 
 Beyondllm lets you fine-tune embedding models on your own data to achieve more accurate and better results. \
 \
