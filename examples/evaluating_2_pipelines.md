@@ -39,7 +39,7 @@ retriever_normal = retrieve.auto_retriever(data,embed_model,type="normal",top_k=
 ```
 Experiment 2:
 ```python
-retriever_normal = retrieve.auto_retriever(data,embed_model,type="normal",top_k=4)
+retriever_hybrid = retrieve.auto_retriever(data,embed_model,type="hybrid",top_k=4)
 ```
 
 
