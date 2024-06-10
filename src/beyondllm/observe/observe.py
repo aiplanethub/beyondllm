@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 try:
     import phoenix as px
     from phoenix.trace.openai import OpenAIInstrumentor
@@ -13,8 +14,6 @@ except ImportError:
         from phoenix.trace.openai import OpenAIInstrumentor
     else:
         raise ImportError("The required Phoenix packages are not installed.")
-    
-
 
 @dataclass
 class Observer:
@@ -23,4 +22,3 @@ class Observer:
     def run(self):
         self.instrumentor.instrument()
         self.session = px.launch_app()
-        
