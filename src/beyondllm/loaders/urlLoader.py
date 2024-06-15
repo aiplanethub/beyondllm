@@ -28,7 +28,7 @@ class UrlLoader(BaseLoader):
         elif isinstance(path, list):
             urls.extend(path)
 
-        docs = SimpleWebPageReader(urls=urls).load_data()
+        docs = SimpleWebPageReader().load_data(urls=urls)
         return docs
 
     def split(self, documents):
