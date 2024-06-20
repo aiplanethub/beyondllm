@@ -7,3 +7,4 @@ from .ollama import OllamaModel
 from .multimodal import GeminiMultiModal
 from .gpt4o import GPT4oOpenAIModel
 from .chatgroq import GroqModel
+from .claude import ClaudeModel
