@@ -168,6 +168,49 @@ llm = GroqModel(
 
 This code retrieves your Groq API key securely, creates a GroqModel instance with the specified model\_name and retrieved API key, sets an optional temperature parameter, and demonstrates how to use the generate method for text generation. Remember to replace model with the actual Groq model name you want to use.
 
+### Claude Model
+
+The `ClaudeModel` class represents a language model from Anthropic. This model can be integrated into the OpenAGI framework to utilize its capabilities in generating textual responses. Below is the detailed implementation and explanation of the `ClaudeModel`.pip install ollama
+
+**Installation**
+
+```python
+pip install anthropic
+```
+
+**Parameters**
+
+* **Anthropic API Key**: Obtain your Anthropic API key from the Anthropic console and set it up as an environment variable for security. This key authenticates your requests with the Anthropic API.
+* **Model (Required)**: Specifies the Claude language model to use, such as `claude-3-5-sonnet-20240620`.
+
+**Optional Parameters:**
+
+* **temperature**: Controls the response randomness (lower for predictable, higher for creative).
+* **top\_p**: Controls the nucleus sampling, representing the cumulative probability of parameter highest probability tokens.
+* **top\_k**: Limits the sampling pool to the top `k` tokens.
+* **max\_tokens**: Specifies the maximum number of tokens in the generated response.
+
+#### Code Snippet
+
+```python
+import os
+from getpass import getpass
+from beyondllm.llms import ClaudeModel
+
+os.environ['ANTHROPIC_API_KEY'] = getpass("Enter your Anthropic API key securely: ")
+
+llm = ClaudeModel(
+    model="claude-3-5-sonnet-20240620",
+    model_kwargs={"max_tokens": 512, "temperature": 0.1}
+)
+
+#
+#or
+#llm = ClaudeModel(model="claude-3-5-sonnet-20240620",api_key=os.getenv('ANTHROPIC_API_KEY'),
+#    model_kwargs={"max_tokens": 512, "temperature": 0.1}
+#)
+```
+
 ### Ollama&#x20;
 
 Ollama lets you run models locally and use them in your application.
