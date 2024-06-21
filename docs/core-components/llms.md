@@ -132,6 +132,42 @@ llm = HuggingFaceHubModel(model="huggingfaceh4/zephyr-7b-alpha",token="&#x3C;rep
 
 Specify the model name from the HuggingFaceHub and add your token and start using it.
 
+### GroqModel
+
+Groq, a powerful language model API offering access to various chat models, excels at delivering exceptional speed, quality, and energy efficiency compared to traditional methods. If faster LLM inference is a priority, Groq is an excellent choice.
+
+**Installation**
+
+In order to use GroqModel, we first need to install it:
+
+<pre class="language-python"><code class="lang-python">pip <a data-footnote-ref href="#user-content-fn-1">install</a> groq
+</code></pre>
+
+**Parameters**
+
+* **Groq API Key**: Obtain your Groq API key from the Groq console ([https://console.groq.com/keys](https://console.groq.com/keys)) and set it up as an environment variable for security. This key authenticates your requests with the Groq API.
+* **Model** (Required):Specifies the Groq language model to use.&#x20;
+* **Optional Parameters**:
+  * temperature: Controls the response randomness (lower for predictable, higher for creative).
+
+#### &#x20;   Code Snippet
+
+```python
+import os
+from getpass import getpass
+
+os.environ['GROQ_API_KEY'] = getpass("Enter your Groq API key securely: ")
+from beyondllm.llms import GroqModel
+
+llm = GroqModel(
+    model_name=model,
+    groq_api_key=os.getenv('GROQ_API_KEY'),
+    temperature=0 )
+
+```
+
+This code retrieves your Groq API key securely, creates a GroqModel instance with the specified model\_name and retrieved API key, sets an optional temperature parameter, and demonstrates how to use the generate method for text generation. Remember to replace model with the actual Groq model name you want to use.
+
 ### Ollama&#x20;
 
 Ollama lets you run models locally and use them in your application.
@@ -199,4 +235,7 @@ pip install openai
 from beyondllm.llms import AzureOpenAIModel
 
 llm = AzureOpenAIModel(model="gpt4",api_key = "<your_api_key>",deployment_name="",endpoint_url="",model_kwargs={"max_tokens":512,"temperature":0.1})
+
 ```
+
+[^1]: 
