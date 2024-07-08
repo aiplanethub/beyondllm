@@ -53,6 +53,13 @@ def metric_custom_css() -> None:
     
     html_string = """
         <script>
+            const metricLabels = window.parent.document.querySelectorAll("[data-testid='stMetricLabel']");
+            for (const metricLabel of metricLabels)
+            {
+                metricLabel.style.width = "fit-content";
+                metricLabel.style.margin = "auto";
+            }
+
             const metricValues = window.parent.document.querySelectorAll("[data-testid='stMetricValue']");
             for (const metricValue of metricValues)
             {
@@ -105,14 +112,16 @@ if (url.strip() != "") and (not validators.url(url)):
     st.sidebar.error("Please enter a valid URL!")
 
 # Main content section
-st.title("Perform quick model evaulations🔄️")
+st.title("Perform quick LLM evaulations🔄️")
 
 # Custom CSS for better formatting
 st.markdown(
     """
         <style>
+            .block-container { padding-top: 2.5rem; padding-bottom: 1rem; padding-left: 1rem; padding-right: 1rem; }
             span[data-testid="stHeaderActionElements"] { display:none; }
             [data-testid="stMetricLabel"] > div { text-align: center; }
+            iframe { display: none; }
         </style>
     """,
     unsafe_allow_html=True,
