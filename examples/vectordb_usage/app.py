@@ -3,7 +3,6 @@ import streamlit as st
 from beyondllm import generator
 
 from beyondllm.llms import GeminiModel
-from beyondllm import generator
 from ingest import get_retriever
 
 st.title("Chat with CSV file")
@@ -12,7 +11,7 @@ st.text("Enter Google API Key")
 google_api_key = st.text_input("Google API Key:", type="password")
 os.environ['GOOGLE_API_KEY'] = google_api_key
 
-vectordb_options = ['Chroma', 'Pinecone']
+vectordb_options = ['Chroma', 'Pinecone', 'Weaviate']
 with st.sidebar:
     st.title("VectorDB Options")
     vectordb_type = st.selectbox("Select VectorDB Type", 
@@ -50,6 +49,13 @@ with st.sidebar:
         # put the name of the region you want to use
         pinecone_region = st.text_input("Region:")
 
+    elif vectordb_type == 'Weaviate':
+        # get the Weaviate cluster url and index name
+        weaviate_url = st.text_input("Weaviate Cluster URL:")
+        weaviate_index_name = st.text_input("Weaviate Index Name:")
+        weaviate_api_key = st.text_input("Weaviate API Key:", type="password", help="Optional, for authenticated access")
+        weaviate_headers = st.text_input("Weaviate Additional Headers (JSON format):")
+
 if google_api_key:
     st.success("Google API Key entered successfully!")
     uploaded_file = st.file_uploader("Choose a CSV file", type=['csv'])
@@ -74,6 +80,19 @@ if google_api_key:
             retriever = get_retriever(uploaded_file, 
                                       google_api_key, 
                                       vector_db=vectordb_type.lower())
+        elif vectordb_type == 'Weaviate':
+            additional_headers = None
+            if weaviate_headers:
+                import json
+                additional_headers = json.loads(weaviate_headers)
+
+            retriever = get_retriever(uploaded_file, 
+                                      google_api_key, 
+                                      vector_db=vectordb_type.lower(), 
+                                      weaviate_url=weaviate_url,
+                                      weaviate_index_name=weaviate_index_name,
+                                      weaviate_api_key=weaviate_api_key,
+                                      weaviate_headers=additional_headers)
         # Initialize the LLM
         llm = GeminiModel(model_name="gemini-pro",
                           google_api_key = os.environ.get('GOOGLE_API_KEY'))
