@@ -6,9 +6,10 @@
 # - llama-index-readers-youtube-transcript
 
 # Install them using pip:
-#   pip install beyondllm validators llama-index-readers-web youtube_transcript_api llama-index-readers-youtube-transcript
+#   pip install beyondllm validators llama-index-readers-web youtube_transcript_api llama-index-readers-youtube-transcript llama-index-embeddings-azure_openai anthropic llama-index-embeddings-fastembed
 
 import os
+import re
 import time
 import validators
 import streamlit as st
@@ -76,20 +77,36 @@ def metric_custom_css() -> None:
 llm_to_model_tag = {
     "Gemini": ("gemini-1.0-pro", "gemini-1.5-flash", "gemini-1.5-pro"),
     "OpenAI": ("gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"),
-    "Azure OpenAI": (),
+    "Azure OpenAI": ("gpt-35-turbo", "gpt-4", "gpt-35-turbo-16k"),
+    "Anthropic": ("claude-3-5-sonnet-20240620", "claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229")
 }
 
 # Sidebar configuration section
 st.sidebar.title("Configure:")
 
 # LLM selection dropdown
-llm_selected = st.sidebar.selectbox(label="Which LLM you want to use?", options=("Gemini", "OpenAI", "Azure OpenAI"))
+llm_selected = st.sidebar.selectbox(label="Which LLM you want to use?", options=llm_to_model_tag.keys())
+
+if(llm_selected=="Azure OpenAI"):
+    azure_oai_endpoint = st.sidebar.text_input(label="What's your Azure OpenAI Endpoint URL?", placeholder="https://<azure-openai-resource-name>.openai.azure.com/")
+    
+    # URL validation check
+    if (azure_oai_endpoint.strip() != "") and (not bool(re.match("https:\/\/(.+)\.openai\.azure\.com[/]{0,1}", azure_oai_endpoint))):
+        st.sidebar.error("Please enter a valid Endpoint!")
 
 # API key input for selected LLM
 api_key = st.sidebar.text_input(label=f"Provide your API Key{(' for '+ str(llm_selected)) if llm_selected else ''}:", type="password")
 
 # Model selection dropdown based on chosen LLM
 model_name = st.sidebar.selectbox(label=f"Which model from {llm_selected} you want to use?", options=llm_to_model_tag[llm_selected])
+
+if(llm_selected == "Azure OpenAI"):
+    # Configuration for Azure OpenAI LLM
+    azure_oai_deployment_name = st.sidebar.text_input(label=f"Deployment name for {model_name}?", value=model_name)
+    embeddings_oai_model_name = st.sidebar.text_input(label="Embeddings model name?", value="text-embedding-ada-002")
+elif(llm_selected == "Anthropic"):
+    # Information for Anthropic LLM
+    st.sidebar.warning("We use FastEmbedEmbedding('BAAI/bge-small-en-v1.5') model from llama_index for embeddings!")
 
 # Warning message if no models available for chosen LLM
 if llm_to_model_tag[llm_selected] == ():
@@ -122,17 +139,22 @@ st.markdown(
             span[data-testid="stHeaderActionElements"] { display:none; }
             [data-testid="stMetricLabel"] > div { text-align: center; }
             iframe { display: none; }
+            .element-container > .stMarkdown > div[data-testid="stCaptionContainer"] { text-align: center; }
         </style>
     """,
     unsafe_allow_html=True,
 )
 
 # Button disabled state based on input validation and missing credentials
-disabled = not (api_key.strip() != "" and ((url.strip() != "") and (validators.url(url))))
+disabled = not (
+                    api_key.strip() != "" and 
+                    ((url.strip() != "") and (validators.url(url))) and
+                    ((bool(re.match("https:\/\/(.+)\.openai\.azure\.com[/]{0,1}", azure_oai_endpoint)) and (str(azure_oai_deployment_name).strip() != "") and (str(embeddings_oai_model_name).strip() != "")) if llm_selected=="Azure OpenAI" else True)
+                )
 if not disabled:
     os.environ["API_KEY"] = api_key
 else:
-    st.error("Make sure your have Model, API Key and URL set before querying!")
+    st.error("Make sure your have done all the configurations before querying!")
 
 # Question input with dynamic label based on source selection
 question = st.text_input(
@@ -168,6 +190,13 @@ try:
             # uses 'text-embedding-3-small' by default for embeddings
             embed_model = embeddings.OpenAIEmbeddings(api_key=os.environ["API_KEY"])
             llm_model = llms.ChatOpenAIModel(model=model_name, api_key=os.environ["API_KEY"])
+        elif llm_selected == "Azure OpenAI":
+            embed_model = embeddings.AzureAIEmbeddings(deployment_name=embeddings_oai_model_name, azure_key=os.environ["API_KEY"], endpoint_url=azure_oai_endpoint)
+            llm_model = llms.AzureOpenAIModel(model=model_name, azure_key = os.environ["API_KEY"], deployment_name=azure_oai_deployment_name, endpoint_url=azure_oai_endpoint)
+        elif llm_selected == "Anthropic":
+            # uses 'BAAI/bge-small-en-v1.5' by default for embeddings
+            embed_model = embeddings.FastEmbedEmbeddings()
+            llm_model = llms.ClaudeModel(api_key=os.environ["API_KEY"], model=model_name)
         
         msg.toast("Embedding and LLM model configured!", icon="👍"); time.sleep(1)
 
@@ -192,9 +221,12 @@ try:
         formatted_evals = format_rag_triad_evals(pipeline.get_rag_triad_evals())
 
         # Displaying evaluation scores as metric
-        cr_col.metric(label="**Context Relevancy**", value=f"{formatted_evals['context_relevancy']}")
-        ar_col.metric(label="**Answer Relevance**", value=f"{formatted_evals['answer_relevancy']}")
-        grnd_col.metric(label="**Groundedness**", value=f"{formatted_evals['groundness']}")
+        cr_col.metric(label="**Context Relevancy**", value=f"{formatted_evals['context_relevancy']}", help="This score between 0 (least relevant) to 10 (most relevant) indicates how well the system finds information related to your query.")
+        ar_col.metric(label="**Answer Relevance**", value=f"{formatted_evals['answer_relevancy']}", help="This score between 0 (completely irrelevant) to 10 (highly relevant) indicates how well the LLM's response aligns with your question.")
+        grnd_col.metric(label="**Groundedness**", value=f"{formatted_evals['groundness']}", help="This score between 0 (completely hallucinated) to 10 (fully grounded) determines the extent to which the LLM's responses are grounded.")
+
+        if(formatted_evals):
+            st.caption(":orange[**Disclaimer:** These metrics are generated with the use of the same LLM and the detailed prompts defined by the team of beyondllm. Hence, the response may not be fully accurate. Please use your judgment and consult original source for verification.]")
 
         # Applying custom CSS for formatting metrics
         metric_custom_css()
