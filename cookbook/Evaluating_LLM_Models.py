@@ -4,9 +4,10 @@
 # - llama-index-readers-web
 # - youtube_transcript_api
 # - llama-index-readers-youtube-transcript
+# - docx2txt
 
 # Install them using pip:
-#   pip install beyondllm validators llama-index-readers-web youtube_transcript_api llama-index-readers-youtube-transcript llama-index-embeddings-azure_openai anthropic llama-index-embeddings-fastembed
+#   pip install beyondllm validators llama-index-readers-web youtube_transcript_api llama-index-readers-youtube-transcript llama-index-embeddings-azure_openai anthropic llama-index-embeddings-fastembed docx2txt
 
 import os
 import re
@@ -65,7 +66,7 @@ def metric_custom_css() -> None:
             for (const metricValue of metricValues)
             {
                 const value = parseFloat(metricValue.textContent);
-                let color = ((value <= 3) ? "red" : ((value <=6) ? "yellow" : "green"));
+                let color = ((value <= 3) ? "red" : ((value <= 6) ? "yellow" : "green"));
                 metricValue.style.color = color;
                 metricValue.style.textAlign = "center";
             }
@@ -112,21 +113,27 @@ elif(llm_selected == "Anthropic"):
 if llm_to_model_tag[llm_selected] == ():
     st.sidebar.warning("Uh-ohh! Models are getting added soon..")
 
-# Source selection and content link for RAG in columns layout
-source_column, url_column = st.sidebar.columns(2)
-source_selected = source_column.selectbox(label="Which source?", options=("URL", "YouTube"))
-url = url_column.text_input(
-    label="Link to your content:",
-    value=(
-        st.secrets["DEFAULTS"]["PAGE_URL"]
-        if (source_selected.lower() == "url")
-        else st.secrets["DEFAULTS"]["YOUTUBE_URL"]
-    ),
-)
+# Source selection and content for RAG in columns layout
+source_column, second_column = st.sidebar.columns(2)
+source_selected = source_column.selectbox(label="Which source?", options=("URL", "YouTube", "PDF", "DOCX"))
 
-# URL validation check
-if (url.strip() != "") and (not validators.url(url)):
-    st.sidebar.error("Please enter a valid URL!")
+if(source_selected in ("URL", "YouTube")):
+    # Prompt the user for the content link in the second column based on user selection
+    url = second_column.text_input(
+        label="Link to your content:",
+        value=(
+            st.secrets["DEFAULTS"]["PAGE_URL"]
+            if (source_selected.lower() == "url")
+            else st.secrets["DEFAULTS"]["YOUTUBE_URL"]
+        ),
+    )
+
+    # URL validation check
+    if (url.strip() != "") and (not validators.url(url)):
+        st.sidebar.error("Please enter a valid URL!")
+else:
+    # If not URL or YouTube, allow file upload based on selected source
+    uploaded_file = st.sidebar.file_uploader(f"Choose a {source_selected.upper()} file", type=source_selected.lower())
 
 # Main content section
 st.title("Perform quick LLM evaulations🔄️")
@@ -146,11 +153,14 @@ st.markdown(
 )
 
 # Button disabled state based on input validation and missing credentials
-disabled = not (
-                    api_key.strip() != "" and 
-                    ((url.strip() != "") and (validators.url(url))) and
-                    ((bool(re.match("https:\/\/(.+)\.openai\.azure\.com[/]{0,1}", azure_oai_endpoint)) and (str(azure_oai_deployment_name).strip() != "") and (str(embeddings_oai_model_name).strip() != "")) if llm_selected=="Azure OpenAI" else True)
-                )
+disabled = (
+        api_key.strip() != "" and
+        ((bool(re.match("https:\/\/(.+)\.openai\.azure\.com[/]{0,1}", azure_oai_endpoint)) and (str(azure_oai_deployment_name).strip() != "") and (str(embeddings_oai_model_name).strip() != "")) if llm_selected=="Azure OpenAI" else True)
+    )
+try:
+    disabled = not (disabled and ((url.strip() != "") and (validators.url(url))))
+except NameError:
+    disabled = not (disabled and (uploaded_file is not None))
 if not disabled:
     os.environ["API_KEY"] = api_key
 else:
@@ -158,11 +168,11 @@ else:
 
 # Question input with dynamic label based on source selection
 question = st.text_input(
-    label=f"Ask {llm_selected} a question from {'your document' if(source_selected.lower() == 'url') else 'your youtube video'}:",
+    label=f"Ask {llm_selected} a question from {'your youtube video' if(source_selected.lower() == 'youtube') else 'your document'}:",
     value=(
         st.secrets["DEFAULTS"]["PAGE_QUERY"]
         if (source_selected.lower() == "url")
-        else st.secrets["DEFAULTS"]["YOUTUBE_QUERY"]
+        else (st.secrets["DEFAULTS"]["YOUTUBE_QUERY"] if (source_selected.lower() == "youtube") else "")
     ),
     disabled=disabled,
 )
@@ -174,6 +184,21 @@ try:
     if question.strip() and to_run:
         # ---------------------- EXTERNAL DATA LOAD ----------------------
         msg = st.toast("Loading external data...", icon="⚙️"); time.sleep(1)
+
+        if(source_selected.lower() in ("pdf", "docx")):
+            # Define the path to save uploaded files
+            save_path = "./uploaded_files"
+
+            # Create the directory if it doesn't exist
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
+
+            # Combine the save path and uploaded file name to create the complete URL
+            url = os.path.join(save_path, uploaded_file.name)
+
+            # Open the file in binary write mode for safe storage of various file types
+            with open(url, "wb") as f:
+                f.write(uploaded_file.getbuffer())
 
         data = source.fit(url, dtype=str(source_selected).lower(), chunk_size=512, chunk_overlap=0)
 
