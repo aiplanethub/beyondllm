@@ -7,6 +7,7 @@ from typing import List
 import pysbd
 from .base import BaseGenerator,GeneratorConfig
 from dataclasses import dataclass,field
+from beyondllm.memory.base import BaseMemory
 
 def default_llm():
     api_key = os.getenv('GOOGLE_API_KEY')
@@ -52,7 +53,8 @@ class Generate:
     system_prompt: str = None
     retriever:str = ''
     llm: GeminiModel = field(default_factory=default_llm)
-    
+    memory: BaseMemory = None
+
     def __post_init__(self):
         self.pipeline()
 
@@ -63,20 +65,30 @@ class Generate:
         if self.system_prompt is None:
             self.system_prompt = """
             You are an AI assistant who always answer to the user QUERY within the given CONTEXT \
-            You are only job here it to act as knowledge transfer and given accurate response to QUERY by looking in depth into CONTEXT \
-            If QUERY is not with the context, YOU MUST tell `I don't know. The query is not in the given context` \
+            You are only job here it to act as knowledge transfer and given accurate response to QUERY by looking in depth into CONTEXT. \
+            Use both the context and CHAT HISTORY to answer the query. \
+            If QUERY is not within the context or chat history, YOU MUST tell `I don't know. The query is not in the given context` \
             YOU MUST not hallucinate. You are best when it comes to answering from CONTEXT \
-            If you FAIL to execute this task, you will be fired and you will suffer \
+            If you FAIL to execute this task, you will be fired and you will suffer 
             """
+
+        memory_content = ""
+        if self.memory is not None:
+            memory_content = self.memory.get_memory()
 
         template = f"""
         {self.system_prompt}
 
         CONTEXT: {temp}
+        --------------------
+        CHAT HISTORY: {memory_content}
         QUERY: {self.question}
         """
 
         self.RESPONSE = self.llm.predict(template)
+        # Store the question and response in memory
+        if self.memory is not None:
+            self.memory.add_to_memory(question=self.question, response=self.RESPONSE)
         return self.CONTEXT,self.RESPONSE
 
     def call(self):
