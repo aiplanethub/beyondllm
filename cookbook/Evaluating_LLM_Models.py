@@ -4,6 +4,9 @@
 # - llama-index-readers-web
 # - youtube_transcript_api
 # - llama-index-readers-youtube-transcript
+# - llama-index-embeddings-azure_openai
+# - anthropic
+# - llama-index-embeddings-fastembed
 # - docx2txt
 
 # Install them using pip:
@@ -76,7 +79,7 @@ def metric_custom_css() -> None:
 
 # Mapping LLMs to available models
 llm_to_model_tag = {
-    "Gemini": ("gemini-1.0-pro", "gemini-1.5-flash", "gemini-1.5-pro"),
+    "Gemini": ("gemini-1.0-pro", "gemini-pro", "gemini-1.5-pro-latest"),
     "OpenAI": ("gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"),
     "Azure OpenAI": ("gpt-35-turbo", "gpt-4", "gpt-35-turbo-16k"),
     "Anthropic": ("claude-3-5-sonnet-20240620", "claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229")
