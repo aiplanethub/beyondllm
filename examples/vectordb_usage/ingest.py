@@ -1,10 +1,10 @@
 import os
 from beyondllm.retrieve import auto_retriever
-from beyondllm.vectordb import ChromaVectorDb, PineconeVectorDb
+from beyondllm.vectordb import ChromaVectorDb, PineconeVectorDb, WeaviateVectorDb
 from beyondllm.embeddings import GeminiEmbeddings
 from beyondllm import source
 
-def get_retriever(uploaded_file, google_api_key, vector_db='chroma', pinecone_api_key=None, pinecone_index_name=None, pinecone_option=None, pinecone_embedding_dim=None, pinecone_metric=None, pinecone_cloud=None, pinecone_region=None):
+def get_retriever(uploaded_file, google_api_key, vector_db='chroma', pinecone_api_key=None, pinecone_index_name=None, pinecone_option=None, pinecone_embedding_dim=None, pinecone_metric=None, pinecone_cloud=None, pinecone_region=None, weaviate_url=None, weaviate_index_name=None, weaviate_api_key=None, weaviate_headers=None):
     if google_api_key:
         # Save the uploaded file
         save_path = "./uploaded_files" # change this to your desired path or leave it as is
@@ -41,6 +41,14 @@ def get_retriever(uploaded_file, google_api_key, vector_db='chroma', pinecone_ap
                     cloud=pinecone_cloud,
                     region=pinecone_region,
                 )
+        elif vector_db == 'weaviate':
+            vector_store = WeaviateVectorDb(
+                url=weaviate_url,
+                index_name=weaviate_index_name,
+                api_key=weaviate_api_key,
+                additional_headers=weaviate_headers
+            )
+
         # Initialize the retriever
         retriever = auto_retriever(data=data, embed_model=embed_model, type="normal", top_k=5, vectordb=vector_store)
         
