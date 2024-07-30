@@ -6,7 +6,7 @@ authors = ["AI Planet <tech@aiplanet.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "~3.9 | ~3.10 | ~3.11"
+python = ">=3.8.1,<4.0"
 llama-index = "0.10.27"
 llama-index-embeddings-gemini = "0.1.6"
 nltk = "3.8.1"
