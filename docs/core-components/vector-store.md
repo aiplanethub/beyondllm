@@ -73,10 +73,35 @@ vectordb_new_pod = PineconeVectorDb(
     spec="pod-based",
     pod_type="p1",
     replicas=1,
+
+```
+
+### 3. Weaviate
+
+BeyondLLM currently integrates with Weaviate, a versatile and scalable vector database designed for high-performance similarity search and efficient management of vector embeddings.
+
+#### Parameters for WeaviateVectorDb:
+
+* **weaviate\_url** : Specifies the URL of your Weaviate cluster. This is essential for connecting to the Weaviate instance where your embeddings will be stored.
+* **weaviate\_index\_name** : The name of the index within Weaviate where your embeddings will be organized and managed.
+* **weaviate\_api\_key :** The API key for authenticated access to your Weaviate instance. If not provided, the connection will be unauthenticated.
+* **weaviate\_headers** : Additional headers for the Weaviate request in JSON format. This is useful for custom configurations or additional authentication methods.
+
+#### Code Example:
+
+```python
+from beyondllm.vectordb import WeaviateVectorDb
+
+# Example Weaviate instance with the necessary parameters
+vectordb = WeaviateVectorDb(
+    weaviate_url="https://my-weaviate-instance.com",
+    weaviate_index_name="my_index",
+    weaviate_api_key="my_api_key",  
+    weaviate_headers={"Custom-Header": "Value"}  
 )
 ```
 
-**Integrating with BeyondLLM Retrievers:**
+### **Integrating with BeyondLLM Retrievers:**
 
 VectorDB instances can be used with the auto\_retriever functionality provided by BeyondLLM, by simply passing instance within the auto\_retriever function to enable efficient retrieval from your Vector Store index:
 
@@ -91,7 +116,7 @@ retriever = auto_retriever(data=data, embed_model=embed_model, type="normal", to
 results = retriever.retrieve(query="your_user_query")
 ```
 
-## Choosing the Right Vector Database
+### Choosing the Right Vector Database
 
 The selection of the most suitable vector database depends on several factors:
 
