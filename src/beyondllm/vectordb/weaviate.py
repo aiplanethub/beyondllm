@@ -13,7 +13,7 @@ class WeaviateVectorDb:
     vectordb = WeaviateVectorDb(
         url="<cluster_url>",
         index_name="MyClass",
-        api_key"<your api key>",
+        api_key="<your api key>",
         additional_headers=None
     )
     """
