@@ -82,10 +82,10 @@ BeyondLLM currently integrates with Weaviate, a versatile and scalable vector da
 
 #### Parameters for WeaviateVectorDb:
 
-* **weaviate\_url** : Specifies the URL of your Weaviate cluster. This is essential for connecting to the Weaviate instance where your embeddings will be stored.
-* **weaviate\_index\_name** : The name of the index within Weaviate where your embeddings will be organized and managed.
-* **weaviate\_api\_key :** The API key for authenticated access to your Weaviate instance. If not provided, the connection will be unauthenticated.
-* **weaviate\_headers** : Additional headers for the Weaviate request in JSON format. This is useful for custom configurations or additional authentication methods.
+* **url** : Specifies the URL of your Weaviate cluster. This is essential for connecting to the Weaviate instance where your embeddings will be stored.
+* **index\_name** : The name of the index within Weaviate where your embeddings will be organized and managed.
+* **api\_key** : The API key for authenticated access to your Weaviate instance. If not provided, the connection will be unauthenticated.
+* **additional\_headers** : Additional headers for the Weaviate request in JSON format. This is useful for custom configurations or additional authentication methods.
 
 #### Code Example:
 
@@ -94,10 +94,10 @@ from beyondllm.vectordb import WeaviateVectorDb
 
 # Example Weaviate instance with the necessary parameters
 vectordb = WeaviateVectorDb(
-    weaviate_url="https://my-weaviate-instance.com",
-    weaviate_index_name="my_index",
-    weaviate_api_key="my_api_key",  
-    weaviate_headers={"Custom-Header": "Value"}  
+    url="https://my-weaviate-instance.com",
+    index_name="my_index",
+    api_key="my_api_key",  
+    additional_headers={"Custom-Header": "Value"}  
 )
 ```
 
