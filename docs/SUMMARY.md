@@ -15,14 +15,19 @@
 * [💼 Vector Store](core-components/vector-store.md)
 * [🧠 LLMs](core-components/llms.md)
 * [🔋 Generator](core-components/generator.md)
+* [🧠 Memory](core-components/memory.md)
 * [📊 Evaluation](core-components/evaluation.md)
 * [⏰ Observability](core-components/observability.md)
 
-## Advanced RAG&#x20;
+## Advanced RAG
 
 * [📚 Re-ranker Retrievers](advanced-rag/re-ranker-retrievers.md)
 * [🔀 Hybrid Retrievers](advanced-rag/hybrid-retrievers.md)
 * [📐 Finetune Embeddings](advanced-rag/finetune-embeddings.md)
+
+## Integration
+
+* [🦜️🔗 Langchain](integration/langchain.md)
 
 ## Use Cases
 
