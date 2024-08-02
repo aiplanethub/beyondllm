@@ -1,5 +1,5 @@
 from beyondllm.llms import GeminiModel
-from beyondllm.utils import CONTEXT_RELEVENCE,GROUNDEDNESS,ANSWER_RELEVENCE, GROUND_TRUTH
+from beyondllm.utils import CONTEXT_RELEVENCE,GROUNDEDNESS,ANSWER_RELEVENCE, GROUND_TRUTH, CORRECTNESS
 
 import os,re
 import numpy as np
@@ -164,6 +164,17 @@ class Generate:
         
         return f"Ground truth score: {round(score, 1)}\n{thresholdCheck(score)}"
         
+    def get_correctness(self, answer: str, llm=None):
+        if llm is None:
+            llm = self.llm
+        if not answer:
+            raise ValueError("Missing 'answer' parameter. Usage: get_correctness(answer=\"your_answer_here\").")
+        try:
+            score_str = llm.predict(CORRECTNESS.format(ground_truth=answer, generated_response=self.RESPONSE))
+            score = float(extract_number(score_str))
+            return f"Correctness score: {round(score, 1)}\n{thresholdCheck(score)}"
+        except Exception as e:
+            return f"Failed during correctness evaluation: {e}"
 
     @staticmethod
     def load_from_kwargs(self,kwargs): 

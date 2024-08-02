@@ -92,3 +92,37 @@ GROUND_TRUTH: {ground_truth}
 GENERATED_RESPONSE: {generated_response}
 
 RELEVANCE:"""
+
+
+
+FAITHFULNESS = """You are a FAITHFULNESS grader. Your task is to evaluate the FAITHFULNESS of the GENERATED_RESPONSE to the provided GROUND_TRUTH. Use the SCORING SCALE below to give a SCORE.
+Respond only as a number from 0 to 10 where 0 is the least faithful and 10 is the most faithful.
+Only reply in the form of a number nothing else.
+
+Scoring Scale:
+- 10: The GENERATED_RESPONSE is fully consistent with the GROUND_TRUTH, presenting identical or nearly identical information.
+- 7 to 9: The GENERATED_RESPONSE is mostly consistent with the GROUND_TRUTH but may contain minor discrepancies or additional information.
+- 4 to 6: The GENERATED_RESPONSE is partially consistent with the GROUND_TRUTH, with noticeable discrepancies or inaccuracies.
+- 1 to 3: The GENERATED_RESPONSE shows minimal consistency with the GROUND_TRUTH, with significant discrepancies.
+- 0: The GENERATED_RESPONSE is not consistent with the GROUND_TRUTH in any significant way; no useful information is provided.
+
+GROUND_TRUTH: {ground_truth}
+GENERATED_RESPONSE: {generated_response}
+Score:
+"""
+
+CORRECTNESS = """You are a CORRECTNESS grader. Your task is to evaluate the correctness of the GENERATED_RESPONSE in relation to the provided GROUND_TRUTH. Use the SCORING SCALE below to give a SCORE.
+Respond only as a number from 0 to 10 where 0 is the least correct and 10 is the most correct.
+Only reply in the form of a number nothing else.
+
+Scoring Scale:
+- 10: The GENERATED_RESPONSE is completely accurate and correct in all aspects compared to the GROUND_TRUTH.
+- 7 to 9: The GENERATED_RESPONSE is mostly accurate, with minor errors or omissions compared to the GROUND_TRUTH.
+- 4 to 6: The GENERATED_RESPONSE contains noticeable errors or inaccuracies compared to the GROUND_TRUTH.
+- 1 to 3: The GENERATED_RESPONSE has significant errors or inaccuracies compared to the GROUND_TRUTH.
+- 0: The GENERATED_RESPONSE is entirely incorrect or misleading in relation to the GROUND_TRUTH.
+
+GROUND_TRUTH: {ground_truth}
+GENERATED_RESPONSE: {generated_response}
+Score:
+"""
