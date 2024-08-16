@@ -3,7 +3,7 @@ from beyondllm.utils import CONTEXT_RELEVENCE,GROUNDEDNESS,ANSWER_RELEVENCE, GRO
 
 import os,re
 import numpy as np
-from typing import List
+from typing import List, Dict
 import pysbd
 from .base import BaseGenerator,GeneratorConfig
 from dataclasses import dataclass,field
@@ -49,19 +49,13 @@ class Generate:
     >>> groundness = pipeline.get_groundedness()
     ```
     """
-    question: str
+    question: str = None
     system_prompt: str = None
     retriever:str = ''
     llm: GeminiModel = field(default_factory=default_llm)
     memory: BaseMemory = None
 
     def __post_init__(self):
-        self.pipeline()
-
-    def pipeline(self):
-        self.CONTEXT = [node_with_score.node.text for node_with_score in self.retriever.retrieve(self.question)]
-        temp = ".".join(self.CONTEXT)
-
         if self.system_prompt is None:
             self.system_prompt = """
             You are an AI assistant who always answer to the user QUERY within the given CONTEXT \
@@ -71,6 +65,11 @@ class Generate:
             YOU MUST not hallucinate. You are best when it comes to answering from CONTEXT \
             If you FAIL to execute this task, you will be fired and you will suffer 
             """
+
+    def call(self, question: str) -> str:
+        self.question = question  # Set self.question here
+        self.CONTEXT = [node_with_score.node.text for node_with_score in self.retriever.retrieve(self.question)]
+        temp = ".".join(self.CONTEXT)
 
         memory_content = ""
         if self.memory is not None:
@@ -86,12 +85,11 @@ class Generate:
         """
 
         self.RESPONSE = self.llm.predict(template)
+        
         # Store the question and response in memory
         if self.memory is not None:
             self.memory.add_to_memory(question=self.question, response=self.RESPONSE)
-        return self.CONTEXT,self.RESPONSE
-
-    def call(self):
+        
         return self.RESPONSE
 
     def get_rag_triad_evals(self, llm = None):
@@ -165,8 +163,6 @@ class Generate:
         return f"Ground truth score: {round(score, 1)}\n{thresholdCheck(score)}"
         
 
-    @staticmethod
-    def load_from_kwargs(self,kwargs): 
-        model_config = GeneratorConfig(**kwargs)
-        self.config = model_config
-        self.pipeline()
+    @classmethod
+    def load_from_kwargs(cls, kwargs: Dict):
+            return cls(**kwargs)
