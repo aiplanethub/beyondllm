@@ -10,7 +10,7 @@ class GeminiModel:
     Example:
     ```
     >>> from beyondllm.llms import GeminiModel
-    >>> llm = GeminiModel(model_name="gemini-pro",google_api_key = "<your_api_key>",model_kwargs={"temperature":0.2})
+    >>> llm = GeminiModel(model_name="gemini-1.5-flash",google_api_key = "<your_api_key>",model_kwargs={"temperature":0.2})
     ```
     or 
     ```
@@ -21,7 +21,7 @@ class GeminiModel:
     ```
     """
     google_api_key:str = ""
-    model_name:str = "gemini-pro"
+    model_name:str = "gemini-1.5-flash"
     model_kwargs: dict = field(default_factory=lambda: {
                     "temperature": 0,
                     "top_p": 1,
@@ -43,10 +43,6 @@ class GeminiModel:
             raise ImportError("Google Generative AI library is not installed. Please install it with ``pip install google-generativeai``.")
         
         try:
-            VALID_MODEL_SUPPORT = ["gemini-1.0-pro","gemini-pro",'gemini-1.5-pro-latest']
-            if self.model_name not in VALID_MODEL_SUPPORT:
-                raise f"Model not supported. Currently we only support: {','.join(VALID_MODEL_SUPPORT)}."
-            
             genai.configure(api_key = self.google_api_key)
             self.client = genai.GenerativeModel(model_name=self.model_name,
                                                 generation_config=self.model_kwargs)
