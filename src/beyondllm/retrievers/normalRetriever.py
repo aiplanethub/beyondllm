@@ -1,5 +1,5 @@
 from beyondllm.retrievers.base import BaseRetriever
-from llama_index.core import VectorStoreIndex, ServiceContext, StorageContext
+from llama_index.core import VectorStoreIndex, StorageContext
 
 class NormalRetriever(BaseRetriever):
     """
