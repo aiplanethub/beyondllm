@@ -46,8 +46,8 @@ class FineTuneEmbeddings:
             if user_agree.lower() == 'y':
                 import subprocess
                 import sys
-                subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-finetuning"])
-                subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-embeddings-huggingface"])
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-finetuning==0.1.5"])
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-embeddings-huggingface==0.2.0"])
                 
                 from llama_index.finetuning import SentenceTransformersFinetuneEngine
             else:
