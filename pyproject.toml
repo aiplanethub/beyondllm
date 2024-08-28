@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "beyondllm"
-version = "0.2.2.1"
+version = "0.2.3"
 description = "Beyond LLM is an toolkit to Build Experiment Evaluate and Observe RAG pipelines"
 authors = ["AI Planet <tech@aiplanet.com>"]
 readme = "README.md"
