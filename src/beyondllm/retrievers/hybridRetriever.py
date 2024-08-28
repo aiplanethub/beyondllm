@@ -1,5 +1,6 @@
 from beyondllm.retrievers.base import BaseRetriever
-from llama_index.core import VectorStoreIndex, ServiceContext, StorageContext, SimpleKeywordTableIndex
+from llama_index.core import Settings
+from llama_index.core import VectorStoreIndex, StorageContext, SimpleKeywordTableIndex
 from llama_index.core import QueryBundle
 from llama_index.core.schema import NodeWithScore
 from llama_index.core.retrievers import BaseRetriever as LlamaBaseRetriever
@@ -100,16 +101,20 @@ class HybridRetriever(BaseRetriever):
             vector_index = VectorStoreIndex(
                 self.data, embed_model=self.embed_model
             )
+            Settings.llm=None
+            Settings.embed_model=None
             keyword_index = SimpleKeywordTableIndex(
-                self.data, service_context=ServiceContext.from_defaults(llm=None,embed_model=None)
+                self.data
             )
         else:
+            Settings.llm=None
+            Settings.embed_model=None
             storage_context = StorageContext.from_defaults(vector_store=self.vectordb)
             vector_index = VectorStoreIndex(
                 self.data, storage_context=storage_context, embed_model=self.embed_model
             )
             keyword_index = SimpleKeywordTableIndex(
-                self.data, service_context=ServiceContext.from_defaults(llm=None,embed_model=None)
+                self.data,
             )
         return vector_index, keyword_index
     
