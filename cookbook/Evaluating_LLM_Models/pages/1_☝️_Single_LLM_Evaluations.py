@@ -4,10 +4,15 @@
 # - llama-index-readers-web
 # - youtube_transcript_api
 # - llama-index-readers-youtube-transcript
-# - docx2txt
+# - llama-index-embeddings-azure_openai
+# - anthropic
+# - groq
+# - huggingface_hub
+# - llama-index-embeddings-fastembed
+# - llama-index-embeddings-huggingface
 
 # Install them using pip:
-#   pip install beyondllm validators llama-index-readers-web youtube_transcript_api llama-index-readers-youtube-transcript llama-index-embeddings-azure_openai anthropic llama-index-embeddings-fastembed docx2txt
+#   pip install beyondllm validators llama-index-readers-web youtube_transcript_api llama-index-readers-youtube-transcript llama-index-embeddings-azure_openai anthropic groq huggingface_hub llama-index-embeddings-fastembed llama-index-embeddings-huggingface
 
 import os
 import re
@@ -21,21 +26,35 @@ from beyondllm import source, retrieve, embeddings, llms, generator
 def format_rag_triad_evals(evals: str) -> dict:
     """
     Parses the raw RAG triad evaluation string into a well-structured dictionary 
-    containing context_relevancy, answer_relevancy, and groundness scores.
+    containing context_relevancy, answer_relevancy, and groundedness scores.
 
     Parameters
     ----------
-        evals (str): The raw evaluation string output by the pipeline.
+        evals : str
+            The raw evaluation string output by the pipeline.
 
     Returns
     ----------
         dict: A dictionary containing the formatted evaluation scores.
+
+    Example
+    ----------
+        >>> evals = \"""
+        Context relevancy Score: 1.0
+        This response does not meet the evaluation threshold. Consider refining the structure and content for better clarity and effectiveness.
+        Answer relevancy Score: 8.0
+        This response meets the evaluation threshold. It demonstrates strong comprehension and coherence.
+        Groundness score: 7.3
+        This response does not meet the evaluation threshold. Consider refining the structure and content for better clarity and effectiveness.
+        \"""
+        >>> format_rag_triad_evals(evals)
     """
+
     lower_evals = str(evals).lower()
     result = {
         "context_relevancy": float(lower_evals.split("context relevancy score: ")[1].split("\n")[0]),
         "answer_relevancy": float(lower_evals.split("answer relevancy score: ")[1].split("\n")[0]),
-        "groundness": float(lower_evals.split("groundness score: ")[1].split("\n")[0]),
+        "groundedness": float(lower_evals.split("groundness score: ")[1].split("\n")[0]),
     }
     return result
 
@@ -48,9 +67,14 @@ def metric_custom_css() -> None:
     Parameters
     ----------
         None
+    
     Returns
     ----------
         None
+    
+    Example
+    ----------
+        >>> metric_custom_css()
     """
     
     html_string = """
@@ -66,7 +90,7 @@ def metric_custom_css() -> None:
             for (const metricValue of metricValues)
             {
                 const value = parseFloat(metricValue.textContent);
-                let color = ((value <= 3) ? "red" : ((value <= 6) ? "yellow" : "green"));
+                let color = ((value === '-' || value <= 3) ? "red" : ((value <= 6) ? "yellow" : "green"));
                 metricValue.style.color = color;
                 metricValue.style.textAlign = "center";
             }
@@ -76,10 +100,12 @@ def metric_custom_css() -> None:
 
 # Mapping LLMs to available models
 llm_to_model_tag = {
-    "Gemini": ("gemini-1.0-pro", "gemini-1.5-flash", "gemini-1.5-pro"),
-    "OpenAI": ("gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"),
+    "Gemini": ("gemini-1.0-pro", "gemini-pro", "gemini-1.5-pro-latest"),
+    "OpenAI": ("gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-4", "gpt-4-turbo"),
     "Azure OpenAI": ("gpt-35-turbo", "gpt-4", "gpt-35-turbo-16k"),
-    "Anthropic": ("claude-3-5-sonnet-20240620", "claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229")
+    "Anthropic": ("claude-3-5-sonnet-20240620", "claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229"),
+    "Groq": ("mixtral-8x7b-32768", "gemma2-9b-it", "llama-3.1-8b-instant", "llama3-70b-8192", "llama3-8b-8192", "llama3-groq-70b-8192-tool-use-preview", "llama3-groq-8b-8192-tool-use-preview"),
+    "Hugging Face": ("huggingfaceh4/zephyr-7b-alpha", "huggingfaceh4/zephyr-7b-beta")
 }
 
 # Sidebar configuration section
@@ -93,7 +119,7 @@ if(llm_selected=="Azure OpenAI"):
     
     # URL validation check
     if (azure_oai_endpoint.strip() != "") and (not bool(re.match("https:\/\/(.+)\.openai\.azure\.com[/]{0,1}", azure_oai_endpoint))):
-        st.sidebar.error("Please enter a valid Endpoint!")
+        st.sidebar.error("Please enter a valid endpoint!")
 
 # API key input for selected LLM
 api_key = st.sidebar.text_input(label=f"Provide your API Key{(' for '+ str(llm_selected)) if llm_selected else ''}:", type="password")
@@ -105,9 +131,12 @@ if(llm_selected == "Azure OpenAI"):
     # Configuration for Azure OpenAI LLM
     azure_oai_deployment_name = st.sidebar.text_input(label=f"Deployment name for {model_name}?", value=model_name)
     embeddings_oai_model_name = st.sidebar.text_input(label="Embeddings model name?", value="text-embedding-ada-002")
-elif(llm_selected == "Anthropic"):
-    # Information for Anthropic LLM
+elif(llm_selected in ["Anthropic", "Groq"]):
+    # Information for Anthropic & Groq LLMs
     st.sidebar.warning("We use FastEmbedEmbedding('BAAI/bge-small-en-v1.5') model from llama_index for embeddings!")
+elif(llm_selected == "Hugging Face"):
+    # Information for Hugging face LLMs
+    st.sidebar.warning("We use HuggingFaceEmbeddings('sentence-transformers/all-MiniLM-L6-v2') model from Hugging Face for embeddings!")
 
 # Warning message if no models available for chosen LLM
 if llm_to_model_tag[llm_selected] == ():
@@ -136,7 +165,7 @@ else:
     uploaded_file = st.sidebar.file_uploader(f"Choose a {source_selected.upper()} file", type=source_selected.lower())
 
 # Main content section
-st.title("Perform quick LLM evaulations🔄️")
+st.title("Perform Single LLM Evaluations☝️")
 
 # Custom CSS for better formatting
 st.markdown(
@@ -222,6 +251,15 @@ try:
             # uses 'BAAI/bge-small-en-v1.5' by default for embeddings
             embed_model = embeddings.FastEmbedEmbeddings()
             llm_model = llms.ClaudeModel(api_key=os.environ["API_KEY"], model=model_name)
+        elif llm_selected == "Groq":
+            # uses 'BAAI/bge-small-en-v1.5' by default for embeddings
+            embed_model = embeddings.FastEmbedEmbeddings()
+            llm_model = llms.GroqModel(groq_api_key=api_key, model=model_name)
+        elif llm_selected == "Hugging Face":
+            # uses 'BAAI/bge-small-en-v1.5' by default for embeddings
+            # using 'sentence-transformers/all-MiniLM-L6-v2' for embeddings
+            embed_model = embeddings.HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+            llm_model = llms.HuggingFaceHubModel(token=api_key, model=model_name)
         
         msg.toast("Embedding and LLM model configured!", icon="👍"); time.sleep(1)
 
@@ -242,13 +280,16 @@ try:
         msg.toast("Assessing response on evaluation benchmarks...", icon="📊"); time.sleep(1)
         
         cr_col, ar_col, grnd_col = st.columns(3)
-        # Format the retrieved evaluation scores
-        formatted_evals = format_rag_triad_evals(pipeline.get_rag_triad_evals())
+        # Retrieving & formatting the evaluation scores
+        try:
+            formatted_evals = format_rag_triad_evals(pipeline.get_rag_triad_evals())
+        except Exception as _:
+            formatted_evals = {"context_relevancy": "-", "answer_relevancy": "-", "groundedness": "-"}
 
         # Displaying evaluation scores as metric
         cr_col.metric(label="**Context Relevancy**", value=f"{formatted_evals['context_relevancy']}", help="This score between 0 (least relevant) to 10 (most relevant) indicates how well the system finds information related to your query.")
         ar_col.metric(label="**Answer Relevance**", value=f"{formatted_evals['answer_relevancy']}", help="This score between 0 (completely irrelevant) to 10 (highly relevant) indicates how well the LLM's response aligns with your question.")
-        grnd_col.metric(label="**Groundedness**", value=f"{formatted_evals['groundness']}", help="This score between 0 (completely hallucinated) to 10 (fully grounded) determines the extent to which the LLM's responses are grounded.")
+        grnd_col.metric(label="**Groundedness**", value=f"{formatted_evals['groundedness']}", help="This score between 0 (completely hallucinated) to 10 (fully grounded) determines the extent to which the LLM's responses are grounded.")
 
         if(formatted_evals):
             st.caption(":orange[**Disclaimer:** These metrics are generated with the use of the same LLM and the detailed prompts defined by the team of beyondllm. Hence, the response may not be fully accurate. Please use your judgment and consult original source for verification.]")
