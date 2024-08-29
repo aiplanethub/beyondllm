@@ -13,7 +13,7 @@
 # - docx2txt
 
 # Install them using pip:
-#   pip install beyondllm validators llama-index-readers-web youtube_transcript_api llama-index-readers-youtube-transcript llama-index-embeddings-azure_openai anthropic groq huggingface_hub llama-index-embeddings-fastembed llama-index-embeddings-huggingface
+#   pip install beyondllm validators llama-index-readers-web youtube_transcript_api llama-index-readers-youtube-transcript llama-index-embeddings-azure_openai anthropic groq huggingface_hub llama-index-embeddings-fastembed llama-index-embeddings-huggingface docx2txt
 
 import os
 import re

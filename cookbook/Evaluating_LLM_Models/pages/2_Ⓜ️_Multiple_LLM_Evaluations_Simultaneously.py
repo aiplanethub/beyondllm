@@ -1,9 +1,26 @@
-import re
-import streamlit as st
-import validators
-import time
-from beyondllm import source, retrieve, embeddings, llms, generator
+# This script requires the following external libraries:
+# - beyondllm
+# - validators
+# - llama-index-readers-web
+# - youtube_transcript_api
+# - llama-index-readers-youtube-transcript
+# - llama-index-embeddings-azure_openai
+# - anthropic
+# - groq
+# - huggingface_hub
+# - llama-index-embeddings-fastembed
+# - llama-index-embeddings-huggingface
+# - docx2txt
+
+# Install them using pip:
+#   pip install beyondllm validators llama-index-readers-web youtube_transcript_api llama-index-readers-youtube-transcript llama-index-embeddings-azure_openai anthropic groq huggingface_hub llama-index-embeddings-fastembed llama-index-embeddings-huggingface docx2txt
+
 import os
+import re
+import time
+import validators
+import streamlit as st
+from beyondllm import source, retrieve, embeddings, llms, generator
 
 # Dictionary to keep track of models skipped due to errors
 skipped_due_to_err = {}
