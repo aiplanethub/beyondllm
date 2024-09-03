@@ -28,6 +28,7 @@
 ## Integration
 
 * [🦜️🔗 Langchain](integration/langchain.md)
+* [🦙 LlamaIndex](integration/llamaindex.md)
 
 ## Use Cases
 
