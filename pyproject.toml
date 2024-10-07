@@ -20,6 +20,7 @@ pyyaml = "6.0.1"
 regex = "2024.4.16"
 tiktoken = "0.6.0"
 pandas = "2.0.3"
+mistralai = "1.1.0"
 
 
 [build-system]
