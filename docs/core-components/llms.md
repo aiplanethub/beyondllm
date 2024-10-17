@@ -281,4 +281,27 @@ llm = AzureOpenAIModel(model="gpt4",api_key = "<your_api_key>",deployment_name="
 
 ```
 
+### **MistralModel**
+
+The MistralModel utilizes Mistral AI's robust capabilities, offering support for both text and multimodal inputs. It allows users to send text prompts alongside images for enhanced interaction, making it a versatile choice for BeyondLLM users. This model handles complex requests while ensuring flexibility in configuration. It is particularly useful for use cases requiring the combination of text and visual content.
+
+**Notes**: Ensure you have installed the Mistral AI library and obtained an API key for authentication. The model supports various customization parameters such as `max_tokens` and `temperature`.
+
+**Parameters**
+
+* **Mistral API Key**: Required for authenticating and accessing the Mistral API.
+* **Model Name**: Defines the Mistral model to be used, e.g., `mistral-large`.
+* **Model Parameters**: Optional parameters like `max_tokens`, `temperature` to fine-tune the model's response behavior.
+
+**Code snippet**
+
+```python
+from beyondllm.llms import MistralModel
+
+llm = MistralModel(model_name="mistral-large", api_key="<your_api_key>", model_kwargs={"max_tokens": 512, "temperature": 0.7})
+print(llm.predict("<your-query>", image_path="<optional_image_path>"))
+```
+
+Import the MistralModel, configure it with your API key and model parameters, and start generating responses with support for multimodal inputs.
+
 [^1]: 
