@@ -11,7 +11,7 @@ st.text("Enter Google API Key")
 google_api_key = st.text_input("Google API Key:", type="password")
 os.environ['GOOGLE_API_KEY'] = google_api_key
 
-vectordb_options = ['Chroma', 'Pinecone', 'Weaviate']
+vectordb_options = ['Chroma', 'Pinecone', 'Weaviate', 'Redis']
 with st.sidebar:
     st.title("VectorDB Options")
     vectordb_type = st.selectbox("Select VectorDB Type", 
@@ -56,11 +56,18 @@ with st.sidebar:
         weaviate_api_key = st.text_input("Weaviate API Key:", type="password", help="Optional, for authenticated access")
         weaviate_headers = st.text_input("Weaviate Additional Headers (JSON format):")
 
+    elif vectordb_type == 'Redis':
+        # get the Redis connection details
+        redis_host = st.text_input("Redis Host:")
+        redis_port = st.number_input("Redis Port:", min_value=1, max_value=65535, value=6379)
+        redis_index_name = st.text_input("Redis Index Name:")
+        redis_password = st.text_input("Redis Password:", type="password")
+
 if google_api_key:
     st.success("Google API Key entered successfully!")
     uploaded_file = st.file_uploader("Choose a CSV file", type=['csv'])
     if uploaded_file is not None:
-        st.success("file uploaded successfully!")
+        st.success("File uploaded successfully!")
     question = st.text_input("Enter your question")
 
     if uploaded_file is not None and question:
@@ -93,6 +100,17 @@ if google_api_key:
                                       weaviate_index_name=weaviate_index_name,
                                       weaviate_api_key=weaviate_api_key,
                                       weaviate_headers=additional_headers)
+        elif vectordb_type == 'Redis':
+            retriever = get_retriever(uploaded_file, 
+                                      google_api_key, 
+                                      vector_db=vectordb_type.lower(), 
+                                      redis_host=redis_host,
+                                      redis_port=redis_port,
+                                      redis_index_name=redis_index_name,
+                                      redis_password=redis_password)
+        else:
+            st.error("Unsupported vector_db type selected.")
+
         # Initialize the LLM
         llm = GeminiModel(model_name="gemini-pro",
                           google_api_key = os.environ.get('GOOGLE_API_KEY'))
