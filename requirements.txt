@@ -85,3 +85,4 @@ tzdata==2024.1 ; python_version >= "3.9" and python_version < "3.12"
 urllib3==2.2.1 ; python_version >= "3.9" and python_version < "3.12"
 wrapt==1.16.0 ; python_version >= "3.9" and python_version < "3.12"
 yarl==1.9.4 ; python_version >= "3.9" and python_version < "3.12"
+boto3==1.28.57

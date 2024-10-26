@@ -9,3 +9,4 @@ from .gpt4o import GPT4oOpenAIModel
 from .chatgroq import GroqModel
 from .claude import ClaudeModel
 from .mistral import MistralModel
+from .bedrock import BedrockModel
