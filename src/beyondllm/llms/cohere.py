@@ -21,6 +21,7 @@ class CohereModel:
     ```
     """
     api_key: str =" "
+    model_name: str = "command-r-plus-08-2024"
     model_kwargs: dict = field(default_factory=lambda: {
         "temperature": 0.5,
         "top_p": 1,
@@ -44,7 +45,7 @@ class CohereModel:
     def predict(self, prompt: Any) -> str:
         try:
             response = self.client.chat(
-                model="command-r-plus-08-2024",
+                model=self.model_name, 
                 messages=[{"role": "user", "content": prompt}]
             )
             return response.message.content[0].text
@@ -57,17 +58,3 @@ class CohereModel:
         self.config = model_config
         self.load_llm()
         
-if __name__ == "__main__":
-    import os
-    
-    # set the API key in an environment variable
-    os.environ['COHERE_API_KEY'] = " "
-
-    # Create an instance of CohereModel
-    llm = CohereModel()
-
-    # Make a prediction
-    prompt = "Write a Linkedin post on generative AI using emojis and symbols?"
-    response = llm.predict(prompt)
-
-    print(f"Response: {response}")
