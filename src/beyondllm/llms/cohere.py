@@ -2,7 +2,6 @@ from beyondllm.llms.base import BaseLLMModel, ModelConfig
 from typing import Any, Dict
 from dataclasses import dataclass, field
 import os
-import cohere
 
 @dataclass
 class CohereModel:
@@ -36,7 +35,11 @@ class CohereModel:
         self.load_llm()
 
     def load_llm(self):
-        """Load the Cohere client."""
+        try:
+            import cohere
+        except ImportError:
+            print("The cohere module is not installed. Please install it with 'pip install cohere'.")
+        
         try:
             self.client = cohere.ClientV2(api_key=self.api_key)
         except Exception as e:

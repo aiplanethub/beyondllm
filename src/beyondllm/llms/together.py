@@ -2,7 +2,6 @@ from beyondllm.llms.base import BaseLLMModel, ModelConfig
 from typing import Any, Dict
 from dataclasses import dataclass, field
 import os
-from together import Together
 
 @dataclass
 class TogetherModel:
@@ -36,7 +35,11 @@ class TogetherModel:
         self.load_llm()
 
     def load_llm(self):
-        """Load the Together client."""
+        try:
+            from together import Together
+        except ImportError:
+            print("The together module is not installed. Please install it with 'pip install together'.")
+        
         try:
             self.client = Together(api_key=self.api_key)
         except Exception as e:
@@ -45,16 +48,15 @@ class TogetherModel:
     def predict(self, prompt: Any) -> str:
         """Generate a response from the model based on the provided prompt."""
         try:
-            stream = self.client.chat.completions.create(
+            response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=[{"role": "system", "content": "You are a highly skilled software engineer. Provide detailed explanations and code examples when relevant."},
-                          {"role": "user", "content": prompt}],
-                stream=True
+                          {"role": "user", "content": prompt}]
+                
             )
-            response_text = ""
-            for chunk in stream:
-                response_text += chunk.choices[0].delta.content or ""
+            response_text = response.choices[0].message.content
             return response_text
+           
         except Exception as e:
             raise Exception(f"Failed to generate prediction: {str(e)}")
 
