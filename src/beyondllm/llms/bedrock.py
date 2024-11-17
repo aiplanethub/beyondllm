@@ -41,7 +41,7 @@ class BedrockModel:
         region="us-east-1"
     )
     """
-    model_id: str = field(default="anthropic.claude-instant-v1")
+    model_id: str = field(default="anthropic.claude-3-haiku-20240307-v1:0")
     region: str = field(default="")
     model_kwargs: dict = field(default_factory=lambda: {
         "max_tokens_to_sample": 500,
@@ -127,10 +127,18 @@ class BedrockModel:
         """
         if self.model_id.startswith("anthropic."):
             return {
-                "prompt": f"\n\nHuman: {prompt}\n\nAssistant:",
-                "max_tokens_to_sample": self.model_kwargs.get("max_tokens_to_sample", 500),
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": self.model_kwargs.get("max_tokens_to_sample", 500),
                 "temperature": self.model_kwargs.get("temperature", 0),
                 "top_p": self.model_kwargs.get("top_p", 1),
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": prompt}
+                        ]
+                    }
+                ]
             }
         
         elif self.model_id.startswith("meta."):
@@ -142,12 +150,22 @@ class BedrockModel:
             "inputText": prompt,
             
             }
+        
         elif self.model_id.startswith("ai21."):
             return {
                 "prompt": prompt,
-                "maxTokens": self.model_kwargs.get("max_tokens_to_sample", 500),
-                "temperature": self.model_kwargs.get("temperature", 0),
-                **self.model_kwargs
+                "maxTokens": self.model_kwargs.get("max_tokens_to_sample", 200),
+                "temperature": self.model_kwargs.get("temperature", 0.5),
+                "topP": self.model_kwargs.get("top_p", 0.5)
+            }
+        elif self.model_id.startswith("mistral."):
+            return {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
             }
         else:
             raise ValueError(f"Unsupported model provider in model_id: {self.model_id}")
@@ -159,7 +177,12 @@ class BedrockModel:
         response_body = json.loads(response.get("body").read())
         
         if self.model_id.startswith("anthropic."):
-            return response_body.get("completion", "")
+        # Extract the text content from the response
+            messages = response_body.get("content", [])
+            for message in messages:
+                if message.get("type") == "text":
+                    return message.get("text", "")
+            return ""
         elif self.model_id.startswith("amazon."):
             return response_body.get("results", [{}])[0].get("outputText", "")
         elif self.model_id.startswith("ai21."):
@@ -167,6 +190,17 @@ class BedrockModel:
         
         elif self.model_id.startswith("meta."):
             return response_body.get("generation")
+        elif self.model_id.startswith("ai21."):
+       
+            completions = response_body.get("completions", [])
+            if completions and "data" in completions[0]:
+                return completions[0]["data"].get("text", "")
+            return ""
+        
+        elif self.model_id.startswith("mistral."):
+        # Mistral models respond with a body containing the formatted messages
+            return response_body.get("messages", [{}])[0].get("content", "")
+       
         else:
             raise ValueError(f"Unsupported model provider in model_id: {self.model_id}")
     
