@@ -80,14 +80,14 @@ vectordb_new_pod = PineconeVectorDb(
 
 BeyondLLM currently integrates with Weaviate, a versatile and scalable vector database designed for high-performance similarity search and efficient management of vector embeddings.
 
-#### Parameters for WeaviateVectorDb:
+**Parameters:**
 
 * **url** : Specifies the URL of your Weaviate cluster. This is essential for connecting to the Weaviate instance where your embeddings will be stored.
 * **index\_name** : The name of the index within Weaviate where your embeddings will be organized and managed.
 * **api\_key** : The API key for authenticated access to your Weaviate instance. If not provided, the connection will be unauthenticated.
 * **additional\_headers** : Additional headers for the Weaviate request in JSON format. This is useful for custom configurations or additional authentication methods.
 
-#### Code Example:
+**Code Example:**
 
 ```python
 from beyondllm.vectordb import WeaviateVectorDb
@@ -98,6 +98,34 @@ vectordb = WeaviateVectorDb(
     index_name="my_index",
     api_key="my_api_key",  
     additional_headers={"Custom-Header": "Value"}  
+)
+```
+
+### 4. Qdrant
+
+[Qdrant](http://qdrant.tech) is an open-source, high-performance, vector search engine. It provides a production-ready service with a convenient API to store, search, and manage vectors with additional payload and extended filtering support.
+
+**Parameters:**
+
+* **collection** : Name of the collection to be used. If the collection doesn't exist, it is created automatically.
+* **client** : An instance of [`qdrant_client.QdrantClient`](https://python-client.qdrant.tech/qdrant_client.qdrant_client) for interfacing with the Qdrant server.
+* **llamaindex_kwargs** : Additional options to pass when instantiating [`llama_index.vector_stores.qdrant.QdrantVectorStore`](https://docs.llamaindex.ai/en/stable/api_reference/storage/vector_store/qdrant/#llama_index.vector_stores.qdrant.QdrantVectorStore).
+
+**Code Example:**
+
+```python
+# Install dependencies with:
+# $ pip install llama-index-vector-stores-qdrant
+
+from beyondllm.vectordb import QdrantVectorDb
+from qdrant_client import QdrantClient
+
+vdb = QdrantVectorDb(
+    collection_name="my-collection-name",
+    client=QdrantClient(url="http://localhost:6333"),
+    llamaindex_kwargs={
+        "batch_size": 64
+    }
 )
 ```
 
